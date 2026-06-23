@@ -1,9 +1,19 @@
 'use server'
 
+import { getServerSession } from 'next-auth'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { authOptions } from './api/auth/[...nextauth]/route'
 
 const API_URL = process.env.API_URL || 'http://localhost:8080'
+
+async function authHeaders() {
+  const session = await getServerSession(authOptions)
+  return {
+    'Content-Type': 'application/json',
+    ...(session?.accessToken ? { Authorization: `Bearer ${session.accessToken}` } : {}),
+  }
+}
 
 export async function createRequest(formData) {
   const data = {
@@ -14,7 +24,7 @@ export async function createRequest(formData) {
 
   const res = await fetch(`${API_URL}/requests`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await authHeaders(),
     body: JSON.stringify(data),
   })
 
@@ -25,7 +35,10 @@ export async function createRequest(formData) {
 }
 
 export async function deleteRequest(id) {
-  await fetch(`${API_URL}/requests/${id}`, { method: 'DELETE' })
+  await fetch(`${API_URL}/requests/${id}`, {
+    method: 'DELETE',
+    headers: await authHeaders(),
+  })
   revalidatePath('/requests')
   redirect('/requests')
 }
@@ -41,7 +54,7 @@ export async function createProcess(formData) {
 
   const res = await fetch(`${API_URL}/processes`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await authHeaders(),
     body: JSON.stringify(data),
   })
 
@@ -55,13 +68,17 @@ export async function createProcess(formData) {
 
 export async function updateProcessStatus(id, _prevState, formData) {
   const status = formData.get('status')
+  const headers = await authHeaders()
 
-  const getRes = await fetch(`${API_URL}/processes/${id}`, { cache: 'no-store' })
+  const getRes = await fetch(`${API_URL}/processes/${id}`, {
+    headers,
+    cache: 'no-store',
+  })
   const process = await getRes.json()
 
   const res = await fetch(`${API_URL}/processes/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({ ...process, status }),
   })
 
