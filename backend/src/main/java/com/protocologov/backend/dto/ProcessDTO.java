@@ -1,7 +1,6 @@
 package com.protocologov.backend.dto;
 
 import com.protocologov.backend.enums.Status;
-import com.protocologov.backend.model.Process;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
