@@ -5,6 +5,8 @@ import com.protocologov.backend.service.ProcessService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RestController
+@RequestMapping("/api")
 public class ProcessController {
     private final ProcessService processService;
 
@@ -13,7 +15,7 @@ public class ProcessController {
     }
 
     @PostMapping("/processes")
-    public ResponseEntity<Process> createProcess(@RequestBody Process process) {
+    public ResponseEntity<Process> createProcess(@Valid @RequestBody Process process) {
         Process createdProcess = processService.create(process);
         return ResponseEntity.ok(createdProcess);
     }
@@ -25,7 +27,7 @@ public class ProcessController {
     }
 
     @PutMapping("/processes/{id}")
-    public ResponseEntity<Process> updateProcess(@PathVariable Long id, @RequestBody Process process) {
+    public ResponseEntity<Process> updateProcess(@PathVariable Long id, @Valid @RequestBody Process process) {
         process.setId(id);
         Process updatedProcess = processService.update(process);
         return ResponseEntity.ok(updatedProcess);

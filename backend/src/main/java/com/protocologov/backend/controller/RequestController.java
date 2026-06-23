@@ -5,6 +5,8 @@ import com.protocologov.backend.service.RequestService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RestController
+@RequestMapping("/api")
 public class RequestController {
     private final RequestService requestService;
 
@@ -13,7 +15,7 @@ public class RequestController {
     }
 
     @PostMapping("/requests")
-    public ResponseEntity<Request> createRequest(@RequestBody Request request) {
+    public ResponseEntity<Request> createRequest(@Valid @RequestBody Request request) {
         Request createdRequest = requestService.create(request);
         return ResponseEntity.ok(createdRequest);
     }
@@ -25,7 +27,7 @@ public class RequestController {
     }
 
     @PutMapping("/requests/{id}")
-    public ResponseEntity<Request> updateRequest(@PathVariable Long id, @RequestBody Request request) {
+    public ResponseEntity<Request> updateRequest(@PathVariable Long id, @Valid @RequestBody Request request) {
         request.setId(id);
         Request updatedRequest = requestService.update(request);
         return ResponseEntity.ok(updatedRequest);
