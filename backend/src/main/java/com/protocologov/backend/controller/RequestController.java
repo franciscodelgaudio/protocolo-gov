@@ -1,7 +1,9 @@
 package com.protocologov.backend.controller;
 
+import com.protocologov.backend.dto.RequestDTO;
 import com.protocologov.backend.model.Request;
 import com.protocologov.backend.service.RequestService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,27 +17,36 @@ public class RequestController {
     }
 
     @PostMapping("/requests")
-    public ResponseEntity<Request> createRequest(@Valid @RequestBody Request request) {
-        Request createdRequest = requestService.create(request);
+    public ResponseEntity<Request> createRequest(@Valid @RequestBody RequestDTO requestDTO) {
+        Request request = toEntity(requestDTO);
+        Request createdRequest = requestService.createRequest(request);
         return ResponseEntity.ok(createdRequest);
     }
 
     @GetMapping("/requests/{id}")
     public ResponseEntity<Request> getRequestById(@PathVariable Long id) {
-        Request request = requestService.getById(id);
+        Request request = requestService.getRequestById(id);
         return ResponseEntity.ok(request);
     }
 
     @PutMapping("/requests/{id}")
-    public ResponseEntity<Request> updateRequest(@PathVariable Long id, @Valid @RequestBody Request request) {
+    public ResponseEntity<Request> updateRequest(@PathVariable Long id, @Valid @RequestBody RequestDTO requestDTO) {
+        Request request = toEntity(requestDTO);
         request.setId(id);
-        Request updatedRequest = requestService.update(request);
+        Request updatedRequest = requestService.updateRequest(request);
         return ResponseEntity.ok(updatedRequest);
     }
 
     @DeleteMapping("/requests/{id}")
     public ResponseEntity<Void> deleteRequest(@PathVariable Long id) {
-        requestService.delete(id);
+        requestService.deleteRequest(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private Request toEntity(RequestDTO requestDTO) {
+        Request request = new Request();
+        request.setName(requestDTO.getName());
+        request.setDescription(requestDTO.getDescription());
+        return request;
     }
 }
