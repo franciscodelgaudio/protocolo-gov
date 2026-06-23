@@ -20,13 +20,13 @@ public class ProcessController {
     @PostMapping("/processes")
     public ResponseEntity<Process> createProcess(@Valid @RequestBody ProcessDTO processDTO) {
         Process process = toEntity(processDTO);
-        Process createdProcess = processService.createProcess(process);
+        Process createdProcess = processService.createProcess(process, processDTO.getUserId());
         return ResponseEntity.ok(createdProcess);
     }
 
     @GetMapping("/processes/{id}")
-    public ResponseEntity<Process> getProcessById(@PathVariable Long id) {
-        Process process = processService.getProcessById(id);
+    public ResponseEntity<Process> getProcessById(@PathVariable Long id, @RequestParam Long userId) {
+        Process process = processService.getProcessById(id, userId);
         return ResponseEntity.ok(process);
     }
 
@@ -34,13 +34,13 @@ public class ProcessController {
     public ResponseEntity<Process> updateProcess(@PathVariable Long id, @Valid @RequestBody ProcessDTO processDTO) {
         Process process = toEntity(processDTO);
         process.setId(id);
-        Process updatedProcess = processService.updateProcess(process);
+        Process updatedProcess = processService.updateProcess(process, processDTO.getUserId());
         return ResponseEntity.ok(updatedProcess);
     }
 
     @DeleteMapping("/processes/{id}")
-    public ResponseEntity<Void> deleteProcess(@PathVariable Long id) {
-        processService.deleteProcess(id);
+    public ResponseEntity<Void> deleteProcess(@PathVariable Long id, @RequestParam Long userId) {
+        processService.deleteProcess(id, userId);
         return ResponseEntity.noContent().build();
     }
 

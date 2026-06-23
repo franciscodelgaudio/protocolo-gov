@@ -23,4 +23,7 @@ public class ProcessDTO {
 
     @NotNull(message = "Request id cannot be null")
     private Long requestId;
+
+    @NotNull(message = "User id cannot be null")
+    private Long userId;
 }
