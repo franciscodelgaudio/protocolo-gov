@@ -16,7 +16,11 @@ public class UserRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long idUser;
+    @ManyToOne
+    @JoinColumn(name = "id_user", nullable = false)
+    private User user;
 
-    private Long idRequest;
+    @ManyToOne
+    @JoinColumn(name = "id_request", nullable = false)
+    private Request request;
 }

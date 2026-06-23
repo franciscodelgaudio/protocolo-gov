@@ -26,7 +26,8 @@ public class User {
 
     private String password;
 
-    private String avatar_url;
+    @Column(name="avatar_url")
+    private String avatarUrl;
 
     @Enumerated(EnumType.STRING)
     private Role role;

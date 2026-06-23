@@ -1,10 +1,8 @@
 package com.protocologov.backend.model;
 
+import java.util.Date;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-
-import javax.annotation.processing.Generated;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,6 +27,10 @@ public class Process {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @OneToOne
+    @JoinColumn(name = "request_id", nullable = false, unique = true)
+    private Request request;
 
     public enum Status {
         PENDING,
