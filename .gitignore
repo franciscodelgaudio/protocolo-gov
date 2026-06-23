@@ -5,6 +5,13 @@ target/
 # application.properties (contém credenciais)
 project/src/main/resources/application.properties
 
+# Next.js
+frontend/.next/
+frontend/node_modules/
+frontend/.env
+frontend/.env.local
+frontend/.env*.local
+
 # IDE
 .idea/
 *.iml
