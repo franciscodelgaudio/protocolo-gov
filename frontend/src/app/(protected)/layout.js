@@ -1,10 +1,14 @@
-import Sidebar from '@/components/Sidebar'
+import AppSidebar from '@/components/Sidebar'
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 
 export default function ProtectedLayout({ children }) {
   return (
-    <div className="flex min-h-full">
-      <Sidebar />
-      <main className="flex-1 p-8">{children}</main>
-    </div>
+    <SidebarProvider>
+      <AppSidebar />
+      <main className="flex-1 p-8">
+        <SidebarTrigger className="mb-4" />
+        {children}
+      </main>
+    </SidebarProvider>
   )
 }

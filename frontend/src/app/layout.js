@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from './api/auth/[...nextauth]/route'
 import './globals.css'
 import AuthProvider from '@/components/AuthProvider'
+import { TooltipProvider } from '@/components/ui/tooltip'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
 
@@ -16,7 +17,9 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="pt-BR" className={`${geist.variable} h-full antialiased`}>
       <body className="min-h-full">
-        <AuthProvider session={session}>{children}</AuthProvider>
+        <AuthProvider session={session}>
+          <TooltipProvider>{children}</TooltipProvider>
+        </AuthProvider>
       </body>
     </html>
   )

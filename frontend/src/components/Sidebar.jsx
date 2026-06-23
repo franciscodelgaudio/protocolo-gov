@@ -3,57 +3,76 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
+import { LayoutDashboard, FileText, FolderOpen, LogOut } from 'lucide-react'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/sidebar'
 
 const links = [
-  { href: '/', label: 'Dashboard' },
-  { href: '/requests', label: 'Solicitações' },
-  { href: '/processes', label: 'Processos' },
+  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/requests', label: 'Solicitações', icon: FileText },
+  { href: '/processes', label: 'Processos', icon: FolderOpen },
 ]
 
-export default function Sidebar() {
+export default function AppSidebar() {
   const pathname = usePathname()
   const { data: session } = useSession()
 
   return (
-    <aside className="w-56 shrink-0 border-r bg-muted/40 min-h-screen p-4 flex flex-col">
-      <div className="mb-8">
-        <h1 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
-          ProtocoloGov
-        </h1>
-      </div>
+    <Sidebar>
+      <SidebarHeader className="p-4">
+        <span className="font-semibold text-sm tracking-wide">ProtocoloGov</span>
+      </SidebarHeader>
 
-      <nav className="flex flex-col gap-1 flex-1">
-        {links.map(({ href, label }) => {
-          const active = href === '/' ? pathname === '/' : pathname.startsWith(href)
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={`rounded-md px-3 py-2 text-sm transition-colors ${
-                active
-                  ? 'bg-primary text-primary-foreground font-medium'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-              }`}
-            >
-              {label}
-            </Link>
-          )
-        })}
-      </nav>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Menu</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {links.map(({ href, label, icon: Icon }) => {
+                const active = href === '/' ? pathname === '/' : pathname.startsWith(href)
+                return (
+                  <SidebarMenuItem key={href}>
+                    <SidebarMenuButton render={<Link href={href} />} isActive={active}>
+                      <Icon />
+                      <span>{label}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
 
-      {session?.user && (
-        <div className="border-t pt-4 mt-4">
-          <p className="text-xs text-muted-foreground truncate mb-2">
-            {session.user.name || session.user.email}
-          </p>
-          <button
-            onClick={() => signOut({ callbackUrl: '/' })}
-            className="text-xs text-destructive hover:underline"
-          >
-            Sair
-          </button>
-        </div>
-      )}
-    </aside>
+      <SidebarFooter className="p-4">
+        {session?.user && (
+          <div className="flex flex-col gap-2">
+            <p className="text-xs text-muted-foreground truncate">
+              {session.user.name || session.user.email}
+            </p>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  render={<button onClick={() => signOut({ callbackUrl: '/login' })} />}
+                >
+                  <LogOut />
+                  <span>Sair</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </div>
+        )}
+      </SidebarFooter>
+    </Sidebar>
   )
 }
