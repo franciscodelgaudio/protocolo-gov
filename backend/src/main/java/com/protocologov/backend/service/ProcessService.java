@@ -1,13 +1,14 @@
 package com.protocologov.backend.service;
 
 import com.protocologov.backend.model.Process;
-import com.protocologov.backend.repository.ProcessReposityory;
+import com.protocologov.backend.repository.ProcessRepository;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ProcessService {
-    private final ProcessReposityory processRepository;
+    private final ProcessRepository processRepository;
 
-    public ProcessService(ProcessReposityory processRepository) {
+    public ProcessService(ProcessRepository processRepository) {
         this.processRepository = processRepository;
     }
 

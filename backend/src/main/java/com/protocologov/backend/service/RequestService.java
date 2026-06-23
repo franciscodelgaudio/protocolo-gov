@@ -2,6 +2,7 @@ package com.protocologov.backend.service;
 
 import com.protocologov.backend.model.Request;
 import com.protocologov.backend.repository.RequestRepository;
+import org.springframework.stereotype.Service;
 
 @Service
 public class RequestService {

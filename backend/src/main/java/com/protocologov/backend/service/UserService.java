@@ -2,6 +2,7 @@ package com.protocologov.backend.service;
 
 import com.protocologov.backend.model.User;
 import com.protocologov.backend.repository.UserRepository;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
