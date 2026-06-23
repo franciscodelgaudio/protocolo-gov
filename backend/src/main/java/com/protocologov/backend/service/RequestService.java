@@ -1,7 +1,11 @@
 package com.protocologov.backend.service;
 
+import com.protocologov.backend.model.Request;
+import com.protocologov.backend.repository.RequestRepository;
+
+@Service
 public class RequestService {
-    private RequestRepository requestRepository;
+    private final RequestRepository requestRepository;
 
     public RequestService(RequestRepository requestRepository) {
         this.requestRepository = requestRepository;
