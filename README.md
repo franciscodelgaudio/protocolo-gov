@@ -213,7 +213,6 @@ Configurar:
 * Roles:
 
   * `USER`;
-  * `SERVER`;
   * `ADMIN`;
 * usuários de teste.
 
@@ -228,8 +227,7 @@ Configurar no backend:
 ### Exemplo de regras de permissão
 
 * `USER` pode criar solicitação;
-* `SERVER` pode aceitar, rejeitar e alterar o status do processo;
-* `ADMIN` pode acessar tudo.
+* `ADMIN` pode aceitar, rejeitar, alterar o status do processo e acessar tudo.
 
 ### Resultado esperado do dia
 
