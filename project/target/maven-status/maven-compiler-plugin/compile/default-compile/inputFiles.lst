@@ -1,3 +1,4 @@
+C:\Users\Admin\Desktop\protocolo-gov\project\src\main\java\com\protocologov\config\WebConfig.java
 C:\Users\Admin\Desktop\protocolo-gov\project\src\main\java\com\protocologov\controller\ProcessController.java
 C:\Users\Admin\Desktop\protocolo-gov\project\src\main\java\com\protocologov\controller\RequestController.java
 C:\Users\Admin\Desktop\protocolo-gov\project\src\main\java\com\protocologov\controller\UserController.java
@@ -7,6 +8,10 @@ C:\Users\Admin\Desktop\protocolo-gov\project\src\main\java\com\protocologov\dto\
 C:\Users\Admin\Desktop\protocolo-gov\project\src\main\java\com\protocologov\dto\RequestDTO.java
 C:\Users\Admin\Desktop\protocolo-gov\project\src\main\java\com\protocologov\dto\UserDTO.java
 C:\Users\Admin\Desktop\protocolo-gov\project\src\main\java\com\protocologov\dto\UserRequestDTO.java
+C:\Users\Admin\Desktop\protocolo-gov\project\src\main\java\com\protocologov\exception\BadRequestException.java
+C:\Users\Admin\Desktop\protocolo-gov\project\src\main\java\com\protocologov\exception\ErrorResponse.java
+C:\Users\Admin\Desktop\protocolo-gov\project\src\main\java\com\protocologov\exception\GlobalExceptionHandler.java
+C:\Users\Admin\Desktop\protocolo-gov\project\src\main\java\com\protocologov\exception\ResourceNotFoundException.java
 C:\Users\Admin\Desktop\protocolo-gov\project\src\main\java\com\protocologov\Main.java
 C:\Users\Admin\Desktop\protocolo-gov\project\src\main\java\com\protocologov\model\Process.java
 C:\Users\Admin\Desktop\protocolo-gov\project\src\main\java\com\protocologov\model\Request.java
