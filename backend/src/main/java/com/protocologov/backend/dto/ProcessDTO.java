@@ -1,5 +1,6 @@
 package com.protocologov.backend.dto;
 
+import com.protocologov.backend.enums.Status;
 import com.protocologov.backend.model.Process;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +20,7 @@ public class ProcessDTO {
     private String description;
 
     @NotNull(message = "Status cannot be null")
-    private Process.Status status;
+    private Status status;
 
     @NotNull(message = "Request id cannot be null")
     private Long requestId;

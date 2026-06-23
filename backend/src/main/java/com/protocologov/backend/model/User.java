@@ -1,5 +1,6 @@
 package com.protocologov.backend.model;
 
+import com.protocologov.backend.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -31,9 +32,4 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    public enum Role {
-        USER,
-        ADMIN
-    }
 }

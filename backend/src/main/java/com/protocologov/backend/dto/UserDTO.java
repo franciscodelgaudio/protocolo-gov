@@ -1,6 +1,6 @@
 package com.protocologov.backend.dto;
 
-import com.protocologov.backend.model.User;
+import com.protocologov.backend.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,5 +26,5 @@ public class UserDTO {
     private String avatarUrl;
 
     @NotNull(message = "Role cannot be null")
-    private User.Role role;
+    private Role role;
 }

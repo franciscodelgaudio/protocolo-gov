@@ -1,6 +1,7 @@
 package com.protocologov.backend.model;
 
 import java.util.Date;
+import com.protocologov.backend.enums.Status;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Entity;
@@ -33,10 +34,4 @@ public class Process {
     @OneToOne
     @JoinColumn(name = "request_id", nullable = false, unique = true)
     private Request request;
-
-    public enum Status {
-        PENDING,
-        IN_PROGRESS,
-        COMPLETED
-    }
 }

@@ -1,6 +1,6 @@
 package com.protocologov.backend.dto;
 
-import com.protocologov.backend.model.User;
+import com.protocologov.backend.enums.Role;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,5 +11,5 @@ public class UserResponseDTO {
     private String name;
     private String email;
     private String avatarUrl;
-    private User.Role role;
+    private Role role;
 }
