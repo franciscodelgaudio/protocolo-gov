@@ -60,9 +60,7 @@ export default async function DashboardPage() {
       <div>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-medium text-muted-foreground">Solicitações recentes</h3>
-          <Link href="/requests" className="text-xs text-primary hover:underline">
-            Ver todas
-          </Link>
+          <Link href="/requests" className="text-xs text-primary hover:underline">Ver todas</Link>
         </div>
         {requests.length === 0 ? (
           <p className="text-sm text-muted-foreground">Nenhuma solicitação cadastrada.</p>

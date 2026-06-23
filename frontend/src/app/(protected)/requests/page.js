@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { getRequests } from '@/lib/api'
 import { Button } from '@/components/ui/button'
-import { deleteRequest } from '../actions'
+import { deleteRequest } from '@/app/actions'
 
 export default async function RequestsPage() {
   const requests = await getRequests()
@@ -32,9 +32,7 @@ export default async function RequestsPage() {
               {requests.map((req) => (
                 <tr key={req.id} className="border-b last:border-0 hover:bg-muted/20">
                   <td className="px-4 py-3 font-medium">
-                    <Link href={`/requests/${req.id}`} className="hover:underline">
-                      {req.name}
-                    </Link>
+                    <Link href={`/requests/${req.id}`} className="hover:underline">{req.name}</Link>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground max-w-xs truncate">
                     {req.description || '—'}
@@ -44,10 +42,7 @@ export default async function RequestsPage() {
                   </td>
                   <td className="px-4 py-3">
                     <form action={deleteRequest.bind(null, req.id)}>
-                      <button
-                        type="submit"
-                        className="text-xs text-destructive hover:underline"
-                      >
+                      <button type="submit" className="text-xs text-destructive hover:underline">
                         Excluir
                       </button>
                     </form>

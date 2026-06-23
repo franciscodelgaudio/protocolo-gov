@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getRequest, getProcesses } from '@/lib/api'
-import { createProcess } from '../../actions'
+import { createProcess } from '@/app/actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -26,14 +26,10 @@ export default async function RequestDetailPage({ params }) {
   return (
     <div className="max-w-xl">
       <div className="mb-6">
-        <Link href="/requests" className="text-sm text-muted-foreground hover:underline">
-          ← Voltar
-        </Link>
+        <Link href="/requests" className="text-sm text-muted-foreground hover:underline">← Voltar</Link>
         <h2 className="text-2xl font-bold mt-2">{request.name}</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          {request.createdAt
-            ? new Date(request.createdAt).toLocaleDateString('pt-BR')
-            : '—'}
+          {request.createdAt ? new Date(request.createdAt).toLocaleDateString('pt-BR') : '—'}
         </p>
       </div>
 
@@ -45,21 +41,16 @@ export default async function RequestDetailPage({ params }) {
 
       <div className="mt-8">
         <h3 className="text-base font-semibold mb-4">Processo administrativo</h3>
-
         {linkedProcess ? (
           <div className="rounded-md border p-4 flex items-center justify-between">
             <div>
               <p className="font-medium text-sm">{linkedProcess.name}</p>
-              <span
-                className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[linkedProcess.status] || 'bg-gray-100 text-gray-800'}`}
-              >
+              <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[linkedProcess.status] || 'bg-gray-100 text-gray-800'}`}>
                 {linkedProcess.status}
               </span>
             </div>
             <Link href={`/processes/${linkedProcess.id}`}>
-              <Button variant="outline" size="sm">
-                Ver processo
-              </Button>
+              <Button variant="outline" size="sm">Ver processo</Button>
             </Link>
           </div>
         ) : (

@@ -14,17 +14,12 @@ export default async function ProcessesPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">Processos</h2>
-      </div>
+      <h2 className="text-2xl font-bold mb-6">Processos</h2>
 
       {processes.length === 0 ? (
         <p className="text-sm text-muted-foreground">
           Nenhum processo cadastrado. Crie um a partir de uma{' '}
-          <Link href="/requests" className="underline">
-            solicitação
-          </Link>
-          .
+          <Link href="/requests" className="underline">solicitação</Link>.
         </p>
       ) : (
         <div className="rounded-md border">
@@ -41,14 +36,10 @@ export default async function ProcessesPage() {
               {processes.map((proc) => (
                 <tr key={proc.id} className="border-b last:border-0 hover:bg-muted/20">
                   <td className="px-4 py-3 font-medium">
-                    <Link href={`/processes/${proc.id}`} className="hover:underline">
-                      {proc.name}
-                    </Link>
+                    <Link href={`/processes/${proc.id}`} className="hover:underline">{proc.name}</Link>
                   </td>
                   <td className="px-4 py-3">
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[proc.status] || 'bg-gray-100 text-gray-800'}`}
-                    >
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[proc.status] || 'bg-gray-100 text-gray-800'}`}>
                       {proc.status || '—'}
                     </span>
                   </td>
@@ -56,12 +47,7 @@ export default async function ProcessesPage() {
                     {proc.createdAt ? new Date(proc.createdAt).toLocaleDateString('pt-BR') : '—'}
                   </td>
                   <td className="px-4 py-3">
-                    <Link
-                      href={`/processes/${proc.id}`}
-                      className="text-xs text-primary hover:underline"
-                    >
-                      Ver
-                    </Link>
+                    <Link href={`/processes/${proc.id}`} className="text-xs text-primary hover:underline">Ver</Link>
                   </td>
                 </tr>
               ))}

@@ -5,14 +5,14 @@ export async function middleware(request) {
   const token = await getToken({ req: request })
 
   if (!token) {
-    const signInUrl = new URL('/api/auth/signin', request.url)
-    signInUrl.searchParams.set('callbackUrl', request.url)
-    return NextResponse.redirect(signInUrl)
+    const loginUrl = new URL('/login', request.url)
+    loginUrl.searchParams.set('callbackUrl', request.url)
+    return NextResponse.redirect(loginUrl)
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/((?!api/auth|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!api/auth|login|register|_next/static|_next/image|favicon.ico).*)'],
 }

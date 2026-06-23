@@ -6,7 +6,7 @@ com\protocologov\exception\GlobalExceptionHandler.class
 com\protocologov\model\UserRequest.class
 com\protocologov\repository\ProcessRepository.class
 com\protocologov\repository\UserRequestRepository.class
-com\protocologov\config\WebConfig.class
+com\protocologov\config\SecurityConfig.class
 com\protocologov\dto\RequestDTO.class
 com\protocologov\exception\ErrorResponse.class
 com\protocologov\exception\ResourceNotFoundException.class
