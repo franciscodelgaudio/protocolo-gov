@@ -4,10 +4,11 @@ import com.protocologov.backend.dto.RequestDTO;
 import com.protocologov.backend.model.Request;
 import com.protocologov.backend.service.RequestService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -21,7 +22,7 @@ public class RequestController {
     @PostMapping("/requests")
     public ResponseEntity<Request> createRequest(@Valid @RequestBody RequestDTO requestDTO) {
         Request request = toEntity(requestDTO);
-        return ResponseEntity.ok(requestService.createRequest(request, requestDTO.getUserId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(requestService.createRequest(request, requestDTO.getUserId()));
     }
 
     @PatchMapping("/requests/{id}/accept")
@@ -35,8 +36,8 @@ public class RequestController {
     }
 
     @GetMapping("/requests")
-    public ResponseEntity<List<Request>> getAllRequests(@RequestParam Long userId) {
-        return ResponseEntity.ok(requestService.getAllRequests(userId));
+    public ResponseEntity<Page<Request>> getAllRequests(@RequestParam Long userId, Pageable pageable) {
+        return ResponseEntity.ok(requestService.getAllRequests(userId, pageable));
     }
 
     @GetMapping("/requests/{id}")

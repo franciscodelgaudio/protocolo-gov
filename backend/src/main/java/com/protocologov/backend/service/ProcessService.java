@@ -2,17 +2,19 @@ package com.protocologov.backend.service;
 
 import com.protocologov.backend.enums.RequestStatus;
 import com.protocologov.backend.enums.Role;
+import com.protocologov.backend.enums.Status;
 import com.protocologov.backend.model.Process;
 import com.protocologov.backend.model.Request;
 import com.protocologov.backend.model.User;
 import com.protocologov.backend.repository.ProcessRepository;
 import com.protocologov.backend.repository.RequestRepository;
 import com.protocologov.backend.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @Service
 public class ProcessService {
@@ -26,6 +28,7 @@ public class ProcessService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public Process createProcess(Process process, Long userId) {
         requireAdmin(userId);
 
@@ -33,7 +36,51 @@ public class ProcessService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request id is required to create a process");
         }
 
-        Long requestId = process.getRequest().getId();
+        return createProcessForAcceptedRequest(process.getRequest().getId(), process);
+    }
+
+    @Transactional
+    public Process createProcessFromRequest(Long requestId, Process process, Long userId) {
+        requireAdmin(userId);
+        process.setStatus(Status.PENDING);
+        return createProcessForAcceptedRequest(requestId, process);
+    }
+
+    public Page<Process> getAllProcesses(Long userId, Pageable pageable) {
+        requireAdmin(userId);
+        return processRepository.findAll(pageable);
+    }
+
+    public Process getProcessById(Long id, Long userId) {
+        requireAdmin(userId);
+        return findProcess(id);
+    }
+
+    public Process updateProcess(Process process, Long userId) {
+        requireAdmin(userId);
+        if (!processRepository.existsById(process.getId())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Process not found with id: " + process.getId());
+        }
+        return processRepository.save(process);
+    }
+
+    @Transactional
+    public Process updateStatus(Long id, Status status, Long userId) {
+        requireAdmin(userId);
+        Process process = findProcess(id);
+        process.setStatus(status);
+        return processRepository.save(process);
+    }
+
+    public void deleteProcess(Long id, Long userId) {
+        requireAdmin(userId);
+        if (!processRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Process not found with id: " + id);
+        }
+        processRepository.deleteById(id);
+    }
+
+    private Process createProcessForAcceptedRequest(Long requestId, Process process) {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found with id: " + requestId));
 
@@ -49,31 +96,9 @@ public class ProcessService {
         return processRepository.save(process);
     }
 
-    public List<Process> getAllProcesses(Long userId) {
-        requireAdmin(userId);
-        return processRepository.findAll();
-    }
-
-    public Process getProcessById(Long id, Long userId) {
-        requireAdmin(userId);
+    private Process findProcess(Long id) {
         return processRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Process not found with id: " + id));
-    }
-
-    public Process updateProcess(Process process, Long userId) {
-        requireAdmin(userId);
-        if (!processRepository.existsById(process.getId())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Process not found with id: " + process.getId());
-        }
-        return processRepository.save(process);
-    }
-
-    public void deleteProcess(Long id, Long userId) {
-        requireAdmin(userId);
-        if (!processRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Process not found with id: " + id);
-        }
-        processRepository.deleteById(id);
     }
 
     private void requireAdmin(Long userId) {

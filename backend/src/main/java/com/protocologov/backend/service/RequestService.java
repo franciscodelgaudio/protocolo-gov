@@ -9,6 +9,8 @@ import com.protocologov.backend.repository.ProcessRepository;
 import com.protocologov.backend.repository.RequestRepository;
 import com.protocologov.backend.repository.UserRepository;
 import com.protocologov.backend.repository.UserRequestRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +49,7 @@ public class RequestService {
         return saved;
     }
 
+    @Transactional
     public Request acceptRequest(Long requestId, Long userId) {
         User user = getUser(userId);
         if (user.getRole() != Role.ADMIN) {
@@ -56,10 +59,14 @@ public class RequestService {
                 .orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                                 "Request not found with id: " + requestId));
+        if (request.getStatus() == RequestStatus.REJECTED) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Rejected requests cannot be accepted");
+        }
         request.setStatus(RequestStatus.ACCEPTED);
         return requestRepository.save(request);
     }
 
+    @Transactional
     public Request rejectRequest(Long requestId, Long userId) {
         User user = getUser(userId);
         if (user.getRole() != Role.ADMIN) {
@@ -69,19 +76,20 @@ public class RequestService {
                 .orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                                 "Request not found with id: " + requestId));
+        if (request.getStatus() == RequestStatus.ACCEPTED) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Accepted requests cannot be rejected");
+        }
         request.setStatus(RequestStatus.REJECTED);
         return requestRepository.save(request);
     }
 
-    public List<Request> getAllRequests(Long userId) {
+    public Page<Request> getAllRequests(Long userId, Pageable pageable) {
         User user = getUser(userId);
         if (user.getRole() == Role.ADMIN) {
-            return requestRepository.findAll();
+            return requestRepository.findAll(pageable);
         }
-        return userRequestRepository.findByUser_Id(userId)
-                .stream()
-                .map(UserRequest::getRequest)
-                .toList();
+        return userRequestRepository.findByUser_Id(userId, pageable)
+                .map(UserRequest::getRequest);
     }
 
     public Request getRequestById(Long id, Long userId) {

@@ -1,20 +1,20 @@
-# Plano de Estudo de 7 Dias � Entrevista T�cnica Softplan
+# Plano de Estudo de 7 Dias - Entrevista Técnica Softplan
 
-Este plano foi montado para uma prepara��o intensiva de uma semana, considerando uma rotina de aproximadamente **4 a 6 horas por dia**.
+Este plano foi montado para uma preparação intensiva de uma semana, considerando uma rotina de aproximadamente **4 a 6 horas por dia**.
 
-O objetivo n�o � dominar todas as tecnologias profundamente em poucos dias, mas construir uma base s�lida para conseguir:
+O objetivo não é dominar todas as tecnologias profundamente em poucos dias, mas construir uma base sólida para conseguir:
 
-* explicar os principais conceitos t�cnicos da vaga;
-* implementar um projeto pr�tico com as tecnologias mais relevantes;
-* demonstrar racioc�nio arquitetural;
-* mostrar familiaridade com backend Java, Spring Boot, REST, autentica��o, testes, Docker e frontend React;
+* explicar os principais conceitos técnicos da vaga;
+* implementar um projeto prático com as tecnologias mais relevantes;
+* demonstrar raciocínio arquitetural;
+* mostrar familiaridade com backend Java, Spring Boot, REST, autenticação, testes, Docker e frontend React;
 * entender o contexto de sistemas legados com Java EE, JSP, Servlets e Struts.
 
-> Caso o tempo dispon�vel seja menor, priorize Spring Boot, REST, React, Docker, Keycloak e Mockito. Kubernetes pr�tico e Struts pr�tico podem ser tratados como estudo conceitual.
+> Caso o tempo disponível seja menor, priorize Spring Boot, REST, React, Docker, Keycloak e Mockito. Kubernetes prático e Struts prático podem ser tratados como estudo conceitual.
 
 ---
 
-## Dia 1 � Fundamentos da vaga + backend base
+## Dia 1 - Fundamentos da vaga + backend base
 
 ### Teoria
 
@@ -30,14 +30,14 @@ Estudar:
 
 ### Perguntas que preciso saber responder
 
-* Qual a diferen�a entre Java EE e Spring Boot?
-* O que � um Servlet?
-* O que � JSP?
-* O que � Struts?
-* Por que Spring Boot � mais produtivo?
-* Qual a fun��o de Controller, Service e Repository?
+* Qual a diferença entre Java EE e Spring Boot?
+* O que é um Servlet?
+* O que é JSP?
+* O que é Struts?
+* Por que Spring Boot é mais produtivo?
+* Qual a função de Controller, Service e Repository?
 
-### Pr�tica
+### Prática
 
 Criar o backend com:
 
@@ -61,13 +61,13 @@ Implementar:
 Ao final do dia, o projeto deve ter:
 
 * backend subindo corretamente;
-* conex�o com o banco funcionando;
+* conexão com o banco funcionando;
 * tabelas sendo criadas;
 * possibilidade de criar dados manualmente.
 
 ---
 
-## Dia 2 � API REST completa
+## Dia 2 - API REST completa
 
 ### Teoria
 
@@ -77,7 +77,7 @@ Estudar:
 * HTTP methods;
 * status codes;
 * Exception Handler;
-* pagina��o.
+* paginação.
 
 ### Conceitos que preciso saber
 
@@ -86,14 +86,14 @@ Estudar:
 * `PUT` substitui recurso;
 * `PATCH` altera parcialmente;
 * `DELETE` remove recurso;
-* `400` indica erro de valida��o;
-* `401` indica usu�rio n�o autenticado;
-* `403` indica usu�rio sem permiss�o;
-* `404` indica recurso n�o encontrado;
-* `409` indica conflito de regra de neg�cio;
+* `400` indica erro de validação;
+* `401` indica usuário não autenticado;
+* `403` indica usuário sem permissão;
+* `404` indica recurso não encontrado;
+* `409` indica conflito de regra de negócio;
 * `500` indica erro interno no servidor.
 
-### Pr�tica
+### Prática
 
 Implementar os endpoints:
 
@@ -108,15 +108,15 @@ GET /processes
 PATCH /processes/{id}/status
 ```
 
-### Tamb�m adicionar
+### Também adicionar
 
-* valida��es;
+* validações;
 * `GlobalExceptionHandler`;
 * status codes corretos.
 
-> Observa��o de modelagem: o campo de status pertence ao `Process`, n�o � `Request`.
-> A solicita��o deve ser aceita ou rejeitada pelo fluxo da API, e somente uma solicita��o aceita pode gerar um processo.
-> O andamento depois disso � controlado pelo status do processo.
+> Observação de modelagem: o campo de status pertence ao `Process`, não é `Request`.
+> A solicitação deve ser aceita ou rejeitada pelo fluxo da API, e somente uma solicitação aceita pode gerar um processo.
+> O andamento depois disso é controlado pelo status do processo.
 
 ### Resultado esperado do dia
 
@@ -128,7 +128,7 @@ solicitacao -> processo
 
 ---
 
-## Dia 3 � React consumindo a API
+## Dia 3 - React consumindo a API
 
 ### Teoria
 
@@ -142,7 +142,7 @@ Estudar:
 * React Router;
 * consumo de API.
 
-### Pr�tica
+### Prática
 
 Criar o frontend com:
 
@@ -150,37 +150,37 @@ Criar o frontend com:
 * Vite;
 * TypeScript.
 
-### Telas m�nimas
+### Telas mínimas
 
 Implementar:
 
 * login fake ou tela inicial;
-* listagem de solicita��es;
-* cria��o de solicita��o;
-* detalhe da solicita��o;
+* listagem de solicitações;
+* criação de solicitação;
+* detalhe da solicitação;
 * listagem de processos;
 * detalhe do processo;
-* altera��o de status do processo.
+* alteração de status do processo.
 
-> N�o perder tempo com UI perfeita. O foco � demonstrar o fluxo funcionando.
+> Não perder tempo com UI perfeita. O foco é demonstrar o fluxo funcionando.
 
 ### Resultado esperado do dia
 
 Ao final do dia, o frontend deve conseguir:
 
-* listar solicita��es;
-* criar solicita��es;
+* listar solicitações;
+* criar solicitações;
 * consumir dados reais do backend.
 
 ---
 
-## Dia 4 � Keycloak, OAuth2 e OpenID Connect
+## Dia 4 - Keycloak, OAuth2 e OpenID Connect
 
 ### Teoria
 
 Estudar:
 
-* autentica��o vs autoriza��o;
+* autenticação vs autorização;
 * OAuth2;
 * OpenID Connect;
 * JWT;
@@ -190,7 +190,7 @@ Estudar:
 * Resource Server;
 * Authorization Server.
 
-### Conceitos obrigat�rios
+### Conceitos obrigatórios
 
 Entender:
 
@@ -202,7 +202,7 @@ Entender:
 * client;
 * realm.
 
-### Pr�tica
+### Prática
 
 Subir o Keycloak no Docker Compose.
 
@@ -215,7 +215,7 @@ Configurar:
 
   * `USER`;
   * `ADMIN`;
-* usu�rios de teste.
+* usuários de teste.
 
 ### Backend
 
@@ -223,11 +223,11 @@ Configurar no backend:
 
 * Spring Security;
 * Resource Server JWT;
-* prote��o de endpoints por role.
+* proteção de endpoints por role.
 
-### Exemplo de regras de permiss�o
+### Exemplo de regras de permissão
 
-* `USER` pode criar solicita��o;
+* `USER` pode criar solicitação;
 * `ADMIN` pode aceitar, rejeitar, alterar o status do processo e acessar tudo.
 
 ### Resultado esperado do dia
@@ -235,18 +235,18 @@ Configurar no backend:
 Ao final do dia, o backend deve:
 
 * validar JWT emitido pelo Keycloak;
-* proteger endpoints por perfil de usu�rio.
+* proteger endpoints por perfil de usuário.
 
 ---
 
-## Dia 5 � Testes com JUnit e Mockito
+## Dia 5 - Testes com JUnit e Mockito
 
 ### Teoria
 
 Estudar:
 
-* teste unit�rio;
-* teste de integra��o;
+* teste unitário;
+* teste de integração;
 * mock;
 * stub;
 * Arrange, Act, Assert;
@@ -255,11 +255,11 @@ Estudar:
 
 ### Conceitos que preciso saber explicar
 
-* Teste unit�rio testa uma regra isolada;
-* teste de integra��o testa componentes trabalhando juntos;
-* mock simula uma depend�ncia externa ou infraestrutura.
+* Teste unitário testa uma regra isolada;
+* teste de integração testa componentes trabalhando juntos;
+* mock simula uma dependência externa ou infraestrutura.
 
-### Pr�tica
+### Prática
 
 Criar testes para os Services:
 
@@ -270,12 +270,12 @@ Criar testes para os Services:
 
 Testar:
 
-* criar solicita��o v�lida;
-* n�o criar solicita��o sem t�tulo;
-* aceitar solicita��o pendente;
-* n�o aceitar solicita��o j� rejeitada;
-* criar processo a partir de solicita��o aceita;
-* n�o criar processo a partir de solicita��o pendente;
+* criar solicitação válida;
+* não criar solicitação sem título;
+* aceitar solicitação pendente;
+* não aceitar solicitação já rejeitada;
+* criar processo a partir de solicitação aceita;
+* não criar processo a partir de solicitação pendente;
 * alterar status do processo.
 
 Usar Mockito para mockar os repositories.
@@ -284,12 +284,12 @@ Usar Mockito para mockar os repositories.
 
 Ao final do dia, o projeto deve ter pelo menos:
 
-* 8 testes unit�rios passando;
-* regras de neg�cio principais cobertas por testes.
+* 8 testes unitários passando;
+* regras de negócio principais cobertas por testes.
 
 ---
 
-## Dia 6 � Docker, Docker Compose, JSP/Servlet e Kubernetes b�sico
+## Dia 6 - Docker, Docker Compose, JSP/Servlet e Kubernetes básico
 
 ### Teoria
 
@@ -310,7 +310,7 @@ Estudar:
 
 ---
 
-### Pr�tica Docker
+### Prática Docker
 
 Criar Dockerfile para:
 
@@ -334,9 +334,9 @@ docker compose up
 
 ---
 
-### Pr�tica JSP/Servlet
+### Prática JSP/Servlet
 
-Criar um m�dulo simples chamado:
+Criar um módulo simples chamado:
 
 ```text
 legacy-jsp
@@ -348,11 +348,11 @@ Com uma rota:
 /legacy/requests
 ```
 
-Essa rota deve renderizar uma lista de solicita��es em JSP.
+Essa rota deve renderizar uma lista de solicitações em JSP.
 
 ### Resultado esperado com JSP/Servlet
 
-Ao final dessa parte, eu preciso conseguir explicar a diferen�a entre:
+Ao final dessa parte, eu preciso conseguir explicar a diferença entre:
 
 * frontend server-side com JSP;
 * frontend SPA com React.
@@ -370,69 +370,69 @@ frontend-deployment.yaml
 frontend-service.yaml
 ```
 
-> N�o precisa estar perfeito. O objetivo � conseguir explicar os conceitos principais.
+> Não precisa estar perfeito. O objetivo é conseguir explicar os conceitos principais.
 
 ---
 
-## Dia 7 � Revis�o t�cnica + simula��o de entrevista
+## Dia 7 - Revisão técnica + simulação de entrevista
 
-Nesse dia, n�o implementar muita coisa nova. O foco deve ser consolidar o que j� foi estudado e praticar respostas em voz alta.
+Nesse dia, não implementar muita coisa nova. O foco deve ser consolidar o que já foi estudado e praticar respostas em voz alta.
 
-### Revis�o te�rica
+### Revisão teórica
 
 Conseguir responder:
 
 * Explique a arquitetura do seu projeto.
-* Por que voc� separou Controller, Service e Repository?
-* Como funciona o fluxo de autentica��o com Keycloak?
-* Qual a diferen�a entre OAuth2 e OpenID Connect?
-* Como voc� protegeria um endpoint por perfil?
-* Como voc� testa uma regra de neg�cio com Mockito?
-* Qual a diferen�a entre Docker Compose e Kubernetes?
-* O que � um Servlet?
-* O que � JSP?
-* O que � Struts?
-* Como voc� lidaria com um sistema legado em Java EE?
-* O que � SOLID?
-* Qual design pattern voc� aplicou?
-* Como voc� usa IA no desenvolvimento sem depender cegamente dela?
+* Por que você separou Controller, Service e Repository?
+* Como funciona o fluxo de autenticação com Keycloak?
+* Qual a diferença entre OAuth2 e OpenID Connect?
+* Como você protegeria um endpoint por perfil?
+* Como você testa uma regra de negócio com Mockito?
+* Qual a diferença entre Docker Compose e Kubernetes?
+* O que é um Servlet?
+* O que é JSP?
+* O que é Struts?
+* Como você lidaria com um sistema legado em Java EE?
+* O que é SOLID?
+* Qual design pattern você aplicou?
+* Como você usa IA no desenvolvimento sem depender cegamente dela?
 
 ---
 
 ## Pitch do projeto para a entrevista
 
-Uma poss�vel explica��o do projeto:
+Uma possível explicação do projeto:
 
-> Eu constru� um projeto chamado ProtocolaGov para simular um sistema de solicita��es e processos p�blicos. A ideia foi praticar uma stack pr�xima da vaga: backend em Java com Spring Boot, API REST, autentica��o com Keycloak, OAuth2 e OpenID Connect, frontend em React, testes com Mockito e ambiente com Docker Compose.
+> Eu construí um projeto chamado ProtocolaGov para simular um sistema de solicitações e processos públicos. A ideia foi praticar uma stack próxima da vaga: backend em Java com Spring Boot, API REST, autenticação com Keycloak, OAuth2 e OpenID Connect, frontend em React, testes com Mockito e ambiente com Docker Compose.
 >
-> Tamb�m criei um pequeno m�dulo JSP/Servlet para entender melhor o contexto de aplica��es Java EE legadas, j� que a vaga menciona JSP, Servlets e Struts.
+> Também criei um pequeno módulo JSP/Servlet para entender melhor o contexto de aplicações Java EE legadas, já que a vaga menciona JSP, Servlets e Struts.
 
 ---
 
 ## Resposta honesta sobre lacunas
 
-Caso perguntem sobre tecnologias que ainda n�o domino profundamente:
+Caso perguntem sobre tecnologias que ainda não domino profundamente:
 
-> Minha experi�ncia pr�tica mais forte hoje est� em desenvolvimento web fullstack e backend com APIs. Para essa vaga, aprofundei Spring Boot, REST, testes, Docker e Keycloak. Em Java EE legado, JSP, Servlets e Struts, eu ainda n�o tenho tanta viv�ncia profissional, mas estudei o fluxo, implementei exemplos pequenos e entendo como essas tecnologias se encaixam em sistemas corporativos legados.
+> Minha experiência prática mais forte hoje está em desenvolvimento web fullstack e backend com APIs. Para essa vaga, aprofundei Spring Boot, REST, testes, Docker e Keycloak. Em Java EE legado, JSP, Servlets e Struts, eu ainda não tenho tanta vivência profissional, mas estudei o fluxo, implementei exemplos pequenos e entendo como essas tecnologias se encaixam em sistemas corporativos legados.
 
 ---
 
 ## Prioridade de estudo
 
-### Prioridade 1 � indispens�vel
+### Prioridade 1 - indispensável
 
 * Java;
 * Spring Boot;
 * REST;
 * Controller, Service e Repository;
 * DTO;
-* valida��o;
+* validação;
 * Exception Handler;
 * JPA;
 * PostgreSQL;
 * React consumindo API.
 
-### Prioridade 2 � diferencial forte
+### Prioridade 2 - diferencial forte
 
 * Mockito;
 * Docker Compose;
@@ -441,7 +441,7 @@ Caso perguntem sobre tecnologias que ainda n�o domino profundamente:
 * OpenID Connect;
 * Spring Security.
 
-### Prioridade 3 � saber explicar
+### Prioridade 3 - saber explicar
 
 * Java EE;
 * Servlets;
@@ -452,7 +452,7 @@ Caso perguntem sobre tecnologias que ainda n�o domino profundamente:
 * SOLID;
 * Clean Code.
 
-### Prioridade 4 � b�nus
+### Prioridade 4 - bônus
 
 * Kubernetes rodando localmente;
 * Struts implementado de verdade;
@@ -469,11 +469,11 @@ Ao final da semana, eu preciso conseguir demonstrar que:
 * entendo desenvolvimento backend com Java;
 * consigo construir uma API REST com Spring Boot;
 * sei separar responsabilidades em camadas;
-* entendo autentica��o e autoriza��o com Keycloak;
+* entendo autenticação e autorização com Keycloak;
 * consigo consumir uma API com React;
-* sei criar testes unit�rios com Mockito;
+* sei criar testes unitários com Mockito;
 * entendo Docker e Docker Compose;
-* conhe�o o b�sico de Kubernetes;
-* tenho no��o de aplica��es legadas com Java EE, JSP, Servlets e Struts;
-* consigo explicar decis�es t�cnicas com clareza;
+* conheço o básico de Kubernetes;
+* tenho noção de aplicações legadas com Java EE, JSP, Servlets e Struts;
+* consigo explicar decisões técnicas com clareza;
 * uso IA como ferramenta de apoio, mas valido e entendo o que estou implementando.
