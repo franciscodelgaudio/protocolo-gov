@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class RequestController {
@@ -19,27 +21,29 @@ public class RequestController {
     @PostMapping("/requests")
     public ResponseEntity<Request> createRequest(@Valid @RequestBody RequestDTO requestDTO) {
         Request request = toEntity(requestDTO);
-        Request createdRequest = requestService.createRequest(request);
-        return ResponseEntity.ok(createdRequest);
+        return ResponseEntity.ok(requestService.createRequest(request, requestDTO.getUserId()));
+    }
+
+    @GetMapping("/requests")
+    public ResponseEntity<List<Request>> getAllRequests(@RequestParam Long userId) {
+        return ResponseEntity.ok(requestService.getAllRequests(userId));
     }
 
     @GetMapping("/requests/{id}")
-    public ResponseEntity<Request> getRequestById(@PathVariable Long id) {
-        Request request = requestService.getRequestById(id);
-        return ResponseEntity.ok(request);
+    public ResponseEntity<Request> getRequestById(@PathVariable Long id, @RequestParam Long userId) {
+        return ResponseEntity.ok(requestService.getRequestById(id, userId));
     }
 
     @PutMapping("/requests/{id}")
     public ResponseEntity<Request> updateRequest(@PathVariable Long id, @Valid @RequestBody RequestDTO requestDTO) {
         Request request = toEntity(requestDTO);
         request.setId(id);
-        Request updatedRequest = requestService.updateRequest(request);
-        return ResponseEntity.ok(updatedRequest);
+        return ResponseEntity.ok(requestService.updateRequest(request, requestDTO.getUserId()));
     }
 
     @DeleteMapping("/requests/{id}")
-    public ResponseEntity<Void> deleteRequest(@PathVariable Long id) {
-        requestService.deleteRequest(id);
+    public ResponseEntity<Void> deleteRequest(@PathVariable Long id, @RequestParam Long userId) {
+        requestService.deleteRequest(id, userId);
         return ResponseEntity.noContent().build();
     }
 

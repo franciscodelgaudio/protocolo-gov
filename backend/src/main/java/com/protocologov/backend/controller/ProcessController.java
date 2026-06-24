@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class ProcessController {
@@ -22,6 +24,11 @@ public class ProcessController {
         Process process = toEntity(processDTO);
         Process createdProcess = processService.createProcess(process, processDTO.getUserId());
         return ResponseEntity.ok(createdProcess);
+    }
+
+    @GetMapping("/processes")
+    public ResponseEntity<List<Process>> getAllProcesses(@RequestParam Long userId) {
+        return ResponseEntity.ok(processService.getAllProcesses(userId));
     }
 
     @GetMapping("/processes/{id}")
