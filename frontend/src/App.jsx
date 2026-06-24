@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from '@/contexts/AuthContext.jsx'
 
 import LoginPage from '@/pages/LoginPage.jsx'
+import RegisterPage from '@/pages/RegisterPage.jsx'
 import DashboardPage from '@/pages/DashboardPage.jsx'
 import RequestsPage from '@/pages/RequestsPage.jsx'
 import RequestDetailPage from '@/pages/RequestDetailPage.jsx'
@@ -27,6 +28,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
+      <Route path="/cadastro" element={user ? <Navigate to="/dashboard" replace /> : <RegisterPage />} />
 
       <Route path="/dashboard" element={<RequireAuth><DashboardPage /></RequireAuth>} />
 
