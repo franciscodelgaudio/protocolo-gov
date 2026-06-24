@@ -1,7 +1,10 @@
 package com.protocologov.backend.model;
 
+import com.protocologov.backend.enums.RequestStatus;
 import java.util.Date;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,6 +28,9 @@ public class Request {
     private String description;
 
     private Date createdAt;
+
+    @Enumerated(EnumType.STRING)
+    private RequestStatus status;
 
     @OneToOne(mappedBy = "request")
     private Process process;

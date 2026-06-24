@@ -1,9 +1,11 @@
 package com.protocologov.backend.service;
 
+import com.protocologov.backend.enums.RequestStatus;
 import com.protocologov.backend.enums.Role;
 import com.protocologov.backend.model.Request;
 import com.protocologov.backend.model.User;
 import com.protocologov.backend.model.UserRequest;
+import com.protocologov.backend.repository.ProcessRepository;
 import com.protocologov.backend.repository.RequestRepository;
 import com.protocologov.backend.repository.UserRepository;
 import com.protocologov.backend.repository.UserRequestRepository;
@@ -16,21 +18,25 @@ import java.util.List;
 
 @Service
 public class RequestService {
+    private final ProcessRepository processRepository;
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
     private final UserRequestRepository userRequestRepository;
 
     public RequestService(RequestRepository requestRepository,
-                          UserRepository userRepository,
-                          UserRequestRepository userRequestRepository) {
+            UserRepository userRepository,
+            UserRequestRepository userRequestRepository,
+            ProcessRepository processRepository) {
         this.requestRepository = requestRepository;
         this.userRepository = userRepository;
         this.userRequestRepository = userRequestRepository;
+        this.processRepository = processRepository;
     }
 
     @Transactional
     public Request createRequest(Request request, Long userId) {
         User user = getUser(userId);
+        request.setStatus(RequestStatus.PENDING);
         Request saved = requestRepository.save(request);
 
         UserRequest userRequest = new UserRequest();
@@ -39,6 +45,32 @@ public class RequestService {
         userRequestRepository.save(userRequest);
 
         return saved;
+    }
+
+    public Request acceptRequest(Long requestId, Long userId) {
+        User user = getUser(userId);
+        if (user.getRole() != Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied: only admins can accept requests");
+        }
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Request not found with id: " + requestId));
+        request.setStatus(RequestStatus.ACCEPTED);
+        return requestRepository.save(request);
+    }
+
+    public Request rejectRequest(Long requestId, Long userId) {
+        User user = getUser(userId);
+        if (user.getRole() != Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied: only admins can reject requests");
+        }
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Request not found with id: " + requestId));
+        request.setStatus(RequestStatus.REJECTED);
+        return requestRepository.save(request);
     }
 
     public List<Request> getAllRequests(Long userId) {
@@ -55,7 +87,8 @@ public class RequestService {
     public Request getRequestById(Long id, Long userId) {
         User user = getUser(userId);
         Request request = requestRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found with id: " + id));
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found with id: " + id));
         if (user.getRole() != Role.ADMIN) {
             requireOwnership(userId, id);
         }
@@ -82,13 +115,15 @@ public class RequestService {
         if (user.getRole() != Role.ADMIN) {
             requireOwnership(userId, id);
         }
+        processRepository.deleteByRequest_Id(id);
         userRequestRepository.deleteByRequest_Id(id);
         requestRepository.deleteById(id);
     }
 
     private User getUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId));
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId));
     }
 
     private void requireOwnership(Long userId, Long requestId) {

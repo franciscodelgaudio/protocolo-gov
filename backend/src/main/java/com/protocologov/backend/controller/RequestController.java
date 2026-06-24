@@ -24,6 +24,16 @@ public class RequestController {
         return ResponseEntity.ok(requestService.createRequest(request, requestDTO.getUserId()));
     }
 
+    @PatchMapping("/requests/{id}/accept")
+    public ResponseEntity<Request> acceptRequest(@PathVariable Long id, @RequestParam Long userId) {
+        return ResponseEntity.ok(requestService.acceptRequest(id, userId));
+    }
+
+    @PatchMapping("/requests/{id}/reject")
+    public ResponseEntity<Request> rejectRequest(@PathVariable Long id, @RequestParam Long userId) {
+        return ResponseEntity.ok(requestService.rejectRequest(id, userId));
+    }
+
     @GetMapping("/requests")
     public ResponseEntity<List<Request>> getAllRequests(@RequestParam Long userId) {
         return ResponseEntity.ok(requestService.getAllRequests(userId));

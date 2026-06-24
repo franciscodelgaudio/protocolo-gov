@@ -1,9 +1,12 @@
 package com.protocologov.backend.service;
 
+import com.protocologov.backend.enums.RequestStatus;
 import com.protocologov.backend.enums.Role;
 import com.protocologov.backend.model.Process;
+import com.protocologov.backend.model.Request;
 import com.protocologov.backend.model.User;
 import com.protocologov.backend.repository.ProcessRepository;
+import com.protocologov.backend.repository.RequestRepository;
 import com.protocologov.backend.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,18 +17,35 @@ import java.util.List;
 @Service
 public class ProcessService {
     private final ProcessRepository processRepository;
+    private final RequestRepository requestRepository;
     private final UserRepository userRepository;
 
-    public ProcessService(ProcessRepository processRepository, UserRepository userRepository) {
+    public ProcessService(ProcessRepository processRepository, RequestRepository requestRepository, UserRepository userRepository) {
         this.processRepository = processRepository;
+        this.requestRepository = requestRepository;
         this.userRepository = userRepository;
     }
 
     public Process createProcess(Process process, Long userId) {
         requireAdmin(userId);
-        if (processRepository.existsByRequest_Id(process.getRequest().getId())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "A process already exists for request id: " + process.getRequest().getId());
+
+        if (process.getRequest() == null || process.getRequest().getId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request id is required to create a process");
         }
+
+        Long requestId = process.getRequest().getId();
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found with id: " + requestId));
+
+        if (request.getStatus() != RequestStatus.ACCEPTED) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Only accepted requests can generate a process");
+        }
+
+        if (processRepository.existsByRequest_Id(requestId)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "A process already exists for request id: " + requestId);
+        }
+
+        process.setRequest(request);
         return processRepository.save(process);
     }
 
