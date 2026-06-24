@@ -9,7 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.oauth2.jwt.Jwt;
+import com.protocologov.backend.model.User;
 
 @RestController
 @RequestMapping("/api")
@@ -21,10 +24,13 @@ public class RequestController {
     }
 
     @PostMapping("/requests")
-    public ResponseEntity<Request> createRequest(@Valid @RequestBody RequestDTO requestDTO) {
+    public ResponseEntity<Request> createRequest(@Valid @RequestBody RequestDTO requestDTO,
+            @AuthenticationPrincipal Jwt jwt) {
+
+        User currentUser = requestService.getCurrentUser(jwt);
         Request request = toEntity(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(requestService.createRequest(request, requestDTO.getUserId()));
+                .body(requestService.createRequest(request, currentUser.getId()));
     }
 
     @PatchMapping("/requests/{id}/accept")

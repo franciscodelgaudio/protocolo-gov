@@ -3,6 +3,9 @@ package com.protocologov.backend.service;
 import com.protocologov.backend.model.User;
 import com.protocologov.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.List;
 
@@ -13,6 +16,15 @@ public class UserService {
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public User getCurrentUser(Jwt jwt) {
+        String email = jwt.getClaimAsString("email");
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Authenticated user not found in local database"));
     }
 
     public User create(User user) {

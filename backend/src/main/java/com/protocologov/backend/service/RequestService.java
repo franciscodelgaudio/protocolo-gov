@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.List;
 
@@ -143,5 +144,13 @@ public class RequestService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                     "Access denied: you do not own this request");
         }
+    }
+
+    public User getCurrentUser(Jwt jwt) {
+        String email = jwt.getClaimAsString("email");
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Authenticated user not found in local database"));
     }
 }
