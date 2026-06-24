@@ -1,0 +1,82 @@
+O que é Java EE?	Java EE, hoje Jakarta EE, é um conjunto de especificações para aplicações corporativas Java, como Servlets, JPA, Bean Validation, CDI e APIs para aplicações web e enterprise.	java-ee jakarta-ee
+Qual é a diferença geral entre Java EE/Jakarta EE e Spring Boot?	Java EE/Jakarta EE é um conjunto de especificações implementadas por servidores de aplicação. Spring Boot é um framework opinativo que facilita criar aplicações standalone com configuração automática e servidor embutido.	java-ee spring
+O que é um Servlet?	Servlet é um componente Java que recebe requisições HTTP e gera respostas. É uma das bases tradicionais de aplicações web Java.	java-ee servlet
+O que é JSP?	JSP é uma tecnologia server-side que mistura HTML com código/expressões Java para renderizar páginas no servidor.	java-ee jsp
+O que é MVC?	MVC é um padrão que separa Model, View e Controller. Model representa dados/regras, View apresenta informação e Controller recebe ações do usuário ou requisições.	mvc arquitetura
+Como MVC aparece em uma API REST?	Em uma API REST, o Controller recebe HTTP, o Model representa entidades/dados, e a View normalmente é substituída pela resposta JSON consumida por frontend ou outro cliente.	mvc rest
+Qual é a responsabilidade do Controller?	Receber a requisição, mapear a rota, validar entrada básica, chamar o service e devolver uma resposta HTTP adequada.	controller spring
+Qual é a responsabilidade do Service?	Concentrar regra de negócio e orquestrar operações, como validar estado, verificar permissões e chamar repositories.	service arquitetura
+Qual é a responsabilidade do Repository?	Abstrair o acesso ao banco de dados, normalmente usando Spring Data JPA para consultas, saves, deletes e buscas por id.	repository jpa
+Por que não colocar regra de negócio no Controller?	Porque o Controller deve cuidar de HTTP. Se a regra fica no Service, ela pode ser reutilizada, testada e mantida com menos acoplamento à camada web.	service controller
+Por que não colocar regra de negócio no Repository?	Porque o Repository deve cuidar de persistência. Regras como "só pode abrir se estiver pendente" pertencem ao Service.	repository service
+O que é JPA?	JPA é uma especificação Java para mapear objetos para tabelas relacionais e trabalhar com entidades em vez de SQL manual na maior parte dos casos.	jpa
+O que é Hibernate?	Hibernate é uma implementação popular da especificação JPA. Ele executa o mapeamento objeto-relacional e gera/roda SQL por baixo.	jpa hibernate
+O que é uma Entity?	Entity é uma classe Java mapeada para uma tabela do banco, normalmente anotada com @Entity.	jpa entity
+Para que serve @Id?	@Id marca o campo que representa a chave primária da entidade.	jpa entity
+Para que serve @GeneratedValue?	@GeneratedValue indica que o valor da chave primária será gerado automaticamente, por exemplo pelo banco.	jpa entity
+Para que serve @Table?	@Table permite configurar detalhes da tabela, como nome.	jpa entity
+Para que serve @Column?	@Column permite configurar detalhes de uma coluna, como nome, unicidade e nulidade.	jpa entity
+O que é relacionamento @ManyToOne?	@ManyToOne indica que muitos registros de uma entidade apontam para um registro de outra. Exemplo: muitas solicitações pertencem a um usuário.	jpa relacionamento
+O que é relacionamento @OneToOne?	@OneToOne indica que um registro se relaciona com no máximo um registro de outra entidade. Exemplo: uma solicitação pode gerar um único processo.	jpa relacionamento
+Para que serve @JoinColumn?	@JoinColumn define a coluna de chave estrangeira usada em um relacionamento.	jpa relacionamento
+Para que serve @Enumerated(EnumType.STRING)?	Serve para salvar o nome do enum no banco em vez da posição numérica. Isso evita bugs se a ordem dos valores mudar.	jpa enum
+O que é Spring Data JPA?	Spring Data JPA simplifica repositories JPA, gerando implementações automaticamente a partir de interfaces como JpaRepository.	jpa repository
+O que JpaRepository oferece?	Oferece métodos prontos como save, findById, findAll, deleteById, existsById e suporte a paginação.	repository jpa
+O que significa Optional em findById?	findById retorna Optional porque o registro pode existir ou não. Isso força o código a tratar o caso de não encontrado.	java repository
+O que é Bean Validation?	Bean Validation é uma especificação para validar objetos Java com anotações como @NotNull, @NotBlank e @Size.	bean-validation
+Qual a diferença entre @NotNull e @NotBlank?	@NotNull exige que o valor não seja null. @NotBlank é para String e exige que não seja null, vazia ou só espaços.	bean-validation
+Para que serve @Size?	@Size valida tamanho de String, coleção ou array, como mínimo e máximo de caracteres.	bean-validation
+Para que serve @Valid no Controller?	@Valid manda o Spring validar o DTO recebido antes de executar o método do controller.	bean-validation spring
+O que acontece quando @Valid falha?	O Spring lança MethodArgumentNotValidException, que pode ser tratada por um GlobalExceptionHandler para retornar 400 Bad Request.	bean-validation exception
+O que é DTO?	DTO é um objeto usado para transportar dados entre camadas ou pela API, separando o formato externo da entidade do banco.	dto
+Por que usar DTO em vez de receber Entity direto?	DTO evita expor a entidade, permite validar entrada específica, reduz acoplamento e impede que o cliente envie campos que não deveria controlar.	dto arquitetura
+Qual a diferença entre DTO de entrada e DTO de saída?	DTO de entrada representa o que o cliente pode enviar. DTO de saída representa o que a API devolve, sem expor dados sensíveis ou internos.	dto api
+O que é Pageable?	Pageable é uma abstração do Spring Data que representa paginação e ordenação, com page, size e sort.	pageable spring
+Quais parâmetros HTTP o Spring entende para Pageable?	Por padrão, page, size e sort. Exemplo: ?page=0&size=10&sort=createdAt,desc.	pageable
+A primeira página no Pageable começa em qual número?	Começa em 0.	pageable
+Qual a diferença entre Page e List?	List traz apenas os itens. Page traz os itens e metadados, como totalElements, totalPages, page number e size.	pageable
+Por que usar paginação?	Para evitar carregar muitos dados de uma vez, melhorar performance e permitir navegação por páginas no frontend.	pageable api
+Quem chama page e size?	O cliente da API, como frontend, Postman ou outro sistema. O backend recebe esses parâmetros e o Spring monta o Pageable automaticamente.	pageable api
+O que é uma Transaction?	Transaction é uma unidade de trabalho no banco: ou todas as operações dentro dela dão certo, ou todas são revertidas.	transaction
+Para que serve @Transactional?	@Transactional garante que operações de banco dentro do método sejam executadas em uma transação. Se ocorrer erro, o Spring pode fazer rollback.	transaction spring
+Quando usar @Transactional no Service?	Quando uma regra envolve múltiplas operações de banco que precisam ser consistentes, como criar uma solicitação e também criar seu vínculo com usuário.	transaction service
+Por que transação ajuda na consistência?	Porque evita salvar metade do fluxo. Se uma operação falha, o conjunto pode ser revertido para não deixar dados quebrados.	transaction banco
+O que é REST?	REST é um estilo arquitetural para APIs baseado em recursos, URIs, métodos HTTP, representações e comunicação stateless.	rest api
+O que é um recurso em REST?	Recurso é uma coisa do domínio exposta pela API, como requests, users, orders ou processes.	rest api
+Quando usar GET?	Para buscar dados sem alterar estado no servidor.	rest metodo
+Quando usar POST?	Para criar um recurso ou disparar uma ação de criação no domínio.	rest metodo
+Quando usar PUT?	Para substituir ou atualizar um recurso inteiro.	rest metodo
+Quando usar PATCH?	Para alteração parcial de um recurso, como mudar status, abrir, fechar, aceitar ou rejeitar.	rest metodo
+Quando usar DELETE?	Para remover um recurso.	rest metodo
+O que significa 200 OK?	A requisição foi processada com sucesso e normalmente retorna corpo.	http status
+O que significa 201 Created?	Um novo recurso foi criado com sucesso.	http status
+O que significa 204 No Content?	A operação deu certo, mas não há corpo na resposta, comum em DELETE.	http status
+O que significa 400 Bad Request?	O cliente enviou dados inválidos, como DTO com campos obrigatórios faltando.	http status
+O que significa 403 Forbidden?	O usuário não tem permissão para executar a operação.	http status
+O que significa 404 Not Found?	O recurso solicitado não existe.	http status
+O que significa 409 Conflict?	A requisição faz sentido tecnicamente, mas conflita com uma regra de negócio ou estado atual do recurso.	http status
+O que significa uma rota como PATCH /requests/{id}/open?	Significa: "aplique a ação open na request identificada por id", alterando parcialmente seu estado conforme regras do domínio.	rest rotas
+Por que usar /requests/{id}/open em vez de PUT /requests/{id}?	Porque open é uma ação específica de mudança de estado, não a substituição completa da request. A rota comunica melhor a intenção da operação.	rest rotas
+Uma rota como /requests/{id}/open deixa o banco correto sozinha?	Não. A rota só expressa a intenção. Quem mantém o banco correto é o Service, validando regras e salvando o novo estado dentro de uma transação.	rest service banco
+Qual é o papel da rota em uma ação de domínio?	A rota comunica a intenção da operação para quem consome a API, como abrir, aceitar, rejeitar, cancelar ou concluir.	rest rotas
+Qual é o papel do Service em uma ação de domínio?	O Service decide se a ação pode acontecer, valida o estado atual, aplica a mudança e persiste no banco.	service dominio
+Exemplo: o que o Service deveria validar em /requests/{id}/open?	Validar se a request existe, se o usuário tem permissão, se ela está em um estado que permite abrir, e só então mudar o status para OPEN ou equivalente.	service rotas
+Quando uma ação de domínio deve retornar 409 Conflict?	Quando o recurso existe, mas seu estado atual não permite aquela ação. Exemplo: tentar abrir algo já fechado definitivamente.	http dominio
+Qual a diferença entre rota de recurso e rota de ação?	Rota de recurso manipula entidades de forma geral, como GET /requests. Rota de ação expressa uma transição específica, como PATCH /requests/{id}/open.	rest rotas
+Rotas de ação ferem REST?	Não necessariamente. Em muitos sistemas, ações de domínio com PATCH são aceitáveis quando representam transições claras de estado e deixam a API mais expressiva.	rest rotas
+O que é uma transição de estado?	É a mudança controlada de um status para outro, como PENDING -> OPEN, PENDING -> ACCEPTED ou IN_PROGRESS -> COMPLETED.	dominio status
+Por que modelar status com enum?	Porque limita os estados possíveis, melhora legibilidade e evita strings soltas inconsistentes no código.	dominio enum
+Por que o cliente não deve controlar todos os campos?	Porque campos como status, dono e datas muitas vezes seguem regras do servidor. O cliente pede uma ação; o backend decide o resultado válido.	dto api
+Qual frase boa para explicar rotas de ação na entrevista?	Eu uso rotas como PATCH /requests/{id}/open para deixar explícita a intenção de negócio, mas mantenho a consistência no Service, que valida estado, permissão e transação antes de salvar.	entrevista rotas
+Como explicar a diferença entre endpoint e regra de negócio?	Endpoint é a porta de entrada HTTP. Regra de negócio é a decisão interna sobre se a operação pode acontecer e como ela altera o domínio.	entrevista arquitetura
+Como explicar por que o banco fica mais correto?	O banco fica mais correto porque o backend centraliza regras no Service e usa transações; a rota de ação ajuda a não deixar o cliente manipular campos livremente.	entrevista banco
+Qual é o risco de deixar o cliente mandar status livremente?	O cliente pode pular etapas do fluxo e salvar estados inválidos. Melhor oferecer ações controladas, como open, accept, reject ou complete.	api dominio
+Qual é a vantagem de ações como accept/reject/open/close?	Elas tornam a API mais alinhada ao domínio e permitem regras específicas para cada transição de estado.	api dominio
+O que é GlobalExceptionHandler?	É uma classe com @RestControllerAdvice que centraliza tratamento de exceções e padroniza respostas de erro.	exception spring
+Por que padronizar erros da API?	Para o cliente sempre receber um formato previsível, facilitando debug, frontend e integração.	exception api
+Como responder "por que você usou Service"?	Porque o Service é onde ficam as regras que protegem o domínio, como transições válidas de status, permissões e operações transacionais.	entrevista service
+Como responder "por que você usou Repository"?	Porque o Repository abstrai o acesso ao banco e evita espalhar consultas e persistência pelas outras camadas.	entrevista repository
+Como responder "por que você usou DTO"?	Porque DTO separa o contrato da API da entidade do banco, permitindo validação e controle do que o cliente pode enviar ou receber.	entrevista dto
+Como responder "por que você usou Pageable"?	Porque listagens podem crescer, e paginação evita retornar tudo de uma vez, melhorando performance e experiência do cliente.	entrevista pageable
+Como responder "por que você usou @Transactional"?	Porque algumas operações precisam ser atômicas; se uma parte falha, não quero deixar o banco em estado parcial.	entrevista transaction
+Como responder "o que você entendeu sobre rotas?"	Entendi que a rota deve comunicar a intenção da operação, mas a consistência vem da regra no Service. Por isso ações como PATCH /requests/{id}/open são úteis para transições controladas.	entrevista rotas
