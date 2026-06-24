@@ -39,11 +39,11 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const promises = [
-      getRequests({ userId: user.id, size: 100 }).then(setRequestsData),
+      getRequests({ size: 100 }).then(setRequestsData),
     ]
-    if (isAdmin) promises.push(getProcesses({ userId: user.id, size: 100 }).then(setProcessesData))
+    if (isAdmin) promises.push(getProcesses({ size: 100 }).then(setProcessesData))
     Promise.all(promises).finally(() => setLoading(false))
-  }, [user.id, isAdmin])
+  }, [isAdmin])
 
   const content = requestsData?.content ?? []
   const total = requestsData?.totalElements ?? 0
@@ -62,7 +62,7 @@ export default function DashboardPage() {
     <Layout>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-foreground">
-          {greeting}, {user.name.split(' ')[0]}!
+          {greeting}, {(user.name ?? 'Usuario').split(' ')[0]}!
         </h1>
         <p className="text-muted-foreground mt-1 text-sm">
           {isAdmin ? 'Visão geral do sistema de protocolos.' : 'Acompanhe suas solicitações abaixo.'}

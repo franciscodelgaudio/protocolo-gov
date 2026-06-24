@@ -37,18 +37,18 @@ export default function RequestDetailPage() {
   function load() {
     setLoading(true)
     setError('')
-    getRequestById(id, user.id)
+    getRequestById(id)
       .then(setRequest)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { load() }, [id, user.id])
+  useEffect(() => { load() }, [id])
 
   async function handleAccept() {
     setActionLoading('accept')
     try {
-      const updated = await acceptRequest(id, user.id)
+      const updated = await acceptRequest(id)
       setRequest((r) => ({ ...r, status: updated.status }))
     } catch (err) {
       alert(err.message)
@@ -61,7 +61,7 @@ export default function RequestDetailPage() {
     if (!confirm('Confirmar rejeição desta solicitação?')) return
     setActionLoading('reject')
     try {
-      const updated = await rejectRequest(id, user.id)
+      const updated = await rejectRequest(id)
       setRequest((r) => ({ ...r, status: updated.status }))
     } catch (err) {
       alert(err.message)
@@ -78,7 +78,6 @@ export default function RequestDetailPage() {
       const newProcess = await createProcessFromRequest(id, {
         name: processForm.name,
         description: processForm.description,
-        userId: user.id,
       })
       setRequest((r) => ({ ...r, process: newProcess }))
       setShowProcessModal(false)

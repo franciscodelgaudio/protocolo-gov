@@ -32,17 +32,17 @@ export default function ProcessesPage() {
 
   const load = useCallback(() => {
     setLoading(true)
-    getProcesses({ userId: user.id, page, size: PAGE_SIZE, status: statusFilter })
+    getProcesses({ page, size: PAGE_SIZE, status: statusFilter })
       .then(setData)
       .finally(() => setLoading(false))
-  }, [user.id, page, statusFilter])
+  }, [page, statusFilter])
 
   useEffect(() => { load() }, [load])
 
   async function handleDelete(id) {
     if (!confirm('Excluir este processo?')) return
     try {
-      await deleteProcess(id, user.id)
+      await deleteProcess(id)
       load()
     } catch (err) {
       alert(err.message)

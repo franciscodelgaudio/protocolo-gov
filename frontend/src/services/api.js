@@ -1,3 +1,5 @@
+import { getAccessToken } from '@/services/keycloak.js'
+
 /**
  * API Service — consome o backend em /api (proxy Vite → localhost:8080)
  *
@@ -10,8 +12,15 @@
 
 async function http(path, options = {}) {
   const { body, ...rest } = options
+  const token = await getAccessToken()
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...rest.headers,
+  }
+
   const res = await fetch(`/api${path}`, {
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     ...rest,
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
   })
@@ -86,19 +95,19 @@ export async function createRequest(requestDTO) {
 }
 
 /**
- * GET /api/requests?userId=&page=&size=&status=
+ * GET /api/requests?page=&size=&status=
  * status: ALL | PENDING | ACCEPTED | REJECTED
  */
-export async function getRequests({ userId, page = 0, size = 8, status }) {
-  const params = new URLSearchParams({ userId, page, size })
+export async function getRequests({ page = 0, size = 8, status } = {}) {
+  const params = new URLSearchParams({ page, size })
   if (status && status !== 'ALL') params.set('status', status)
   const data = await http(`/requests?${params}`)
   return adaptPage(data)
 }
 
-/** GET /api/requests/:id?userId= */
-export async function getRequestById(id, userId) {
-  return http(`/requests/${id}?userId=${userId}`)
+/** GET /api/requests/:id */
+export async function getRequestById(id) {
+  return http(`/requests/${id}`)
 }
 
 /** PUT /api/requests/:id */
@@ -106,19 +115,19 @@ export async function updateRequest(id, requestDTO) {
   return http(`/requests/${id}`, { method: 'PUT', body: requestDTO })
 }
 
-/** PATCH /api/requests/:id/accept?userId= */
-export async function acceptRequest(id, userId) {
-  return http(`/requests/${id}/accept?userId=${userId}`, { method: 'PATCH' })
+/** PATCH /api/requests/:id/accept */
+export async function acceptRequest(id) {
+  return http(`/requests/${id}/accept`, { method: 'PATCH' })
 }
 
-/** PATCH /api/requests/:id/reject?userId= */
-export async function rejectRequest(id, userId) {
-  return http(`/requests/${id}/reject?userId=${userId}`, { method: 'PATCH' })
+/** PATCH /api/requests/:id/reject */
+export async function rejectRequest(id) {
+  return http(`/requests/${id}/reject`, { method: 'PATCH' })
 }
 
-/** DELETE /api/requests/:id?userId= */
-export async function deleteRequest(id, userId) {
-  return http(`/requests/${id}?userId=${userId}`, { method: 'DELETE' })
+/** DELETE /api/requests/:id */
+export async function deleteRequest(id) {
+  return http(`/requests/${id}`, { method: 'DELETE' })
 }
 
 // ─── PROCESSES ────────────────────────────────────────────────────────────────
@@ -129,19 +138,19 @@ export async function createProcessFromRequest(requestId, createDTO) {
 }
 
 /**
- * GET /api/processes?userId=&page=&size=&status=
+ * GET /api/processes?page=&size=&status=
  * status: ALL | PENDING | IN_PROGRESS | COMPLETED | CANCELLED
  */
-export async function getProcesses({ userId, page = 0, size = 8, status }) {
-  const params = new URLSearchParams({ userId, page, size })
+export async function getProcesses({ page = 0, size = 8, status } = {}) {
+  const params = new URLSearchParams({ page, size })
   if (status && status !== 'ALL') params.set('status', status)
   const data = await http(`/processes?${params}`)
   return adaptPage(data)
 }
 
-/** GET /api/processes/:id?userId= */
-export async function getProcessById(id, userId) {
-  return http(`/processes/${id}?userId=${userId}`)
+/** GET /api/processes/:id */
+export async function getProcessById(id) {
+  return http(`/processes/${id}`)
 }
 
 /** PUT /api/processes/:id */
@@ -154,7 +163,7 @@ export async function updateProcessStatus(id, updateDTO) {
   return http(`/processes/${id}/status`, { method: 'PATCH', body: updateDTO })
 }
 
-/** DELETE /api/processes/:id?userId= */
-export async function deleteProcess(id, userId) {
-  return http(`/processes/${id}?userId=${userId}`, { method: 'DELETE' })
+/** DELETE /api/processes/:id */
+export async function deleteProcess(id) {
+  return http(`/processes/${id}`, { method: 'DELETE' })
 }

@@ -42,11 +42,11 @@ export default function RequestsPage() {
 
   const load = useCallback(() => {
     setLoading(true)
-    getRequests({ userId: user.id, page, size: PAGE_SIZE, status: statusFilter })
+    getRequests({ page, size: PAGE_SIZE, status: statusFilter })
       .then(setData)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
-  }, [user.id, page, statusFilter])
+  }, [page, statusFilter])
 
   useEffect(() => { load() }, [load])
 
@@ -60,7 +60,7 @@ export default function RequestsPage() {
     setSubmitting(true)
     setError('')
     try {
-      await createRequest({ name: form.name, description: form.description, userId: user.id })
+      await createRequest({ name: form.name, description: form.description })
       setShowModal(false)
       setForm({ name: '', description: '' })
       setPage(0)
@@ -75,7 +75,7 @@ export default function RequestsPage() {
   async function handleDelete(id) {
     if (!confirm('Excluir esta solicitação?')) return
     try {
-      await deleteRequest(id, user.id)
+      await deleteRequest(id)
       load()
     } catch (err) {
       alert(err.message)

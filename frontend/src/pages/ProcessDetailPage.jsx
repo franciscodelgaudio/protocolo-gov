@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { useAuth } from '@/contexts/AuthContext.jsx'
 import { getProcessById, updateProcessStatus, formatDate } from '@/services/api.js'
 import Layout from '@/components/Layout.jsx'
 import StatusBadge from '@/components/StatusBadge.jsx'
@@ -22,7 +21,6 @@ const PROCESS_STATUSES = [
 
 export default function ProcessDetailPage() {
   const { id } = useParams()
-  const { user } = useAuth()
   const navigate = useNavigate()
 
   const [process, setProcess] = useState(null)
@@ -34,17 +32,17 @@ export default function ProcessDetailPage() {
 
   useEffect(() => {
     setLoading(true)
-    getProcessById(id, user.id)
+    getProcessById(id)
       .then((p) => { setProcess(p); setNewStatus(p.status) })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
-  }, [id, user.id])
+  }, [id])
 
   async function handleStatusUpdate() {
     if (newStatus === process.status) return
     setUpdating(true)
     try {
-      const updated = await updateProcessStatus(id, { status: newStatus, userId: user.id })
+      const updated = await updateProcessStatus(id, { status: newStatus })
       setProcess(updated)
       setNewStatus(updated.status)
       setSaved(true)

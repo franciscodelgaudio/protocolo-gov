@@ -11,19 +11,22 @@ import ProcessDetailPage from '@/pages/ProcessDetailPage.jsx'
 import UsersPage from '@/pages/UsersPage.jsx'
 
 function RequireAuth({ children }) {
-  const { user } = useAuth()
+  const { ready, user } = useAuth()
+  if (!ready) return null
   return user ? children : <Navigate to="/login" replace />
 }
 
 function RequireAdmin({ children }) {
-  const { user } = useAuth()
+  const { ready, user } = useAuth()
+  if (!ready) return null
   if (!user) return <Navigate to="/login" replace />
   if (user.role !== 'ADMIN') return <Navigate to="/dashboard" replace />
   return children
 }
 
 function AppRoutes() {
-  const { user } = useAuth()
+  const { ready, user } = useAuth()
+  if (!ready) return null
 
   return (
     <Routes>

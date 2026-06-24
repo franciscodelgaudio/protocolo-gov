@@ -1,29 +1,48 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { getUserFromToken, initKeycloak, keycloak } from '@/services/keycloak.js'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    try {
-      const stored = localStorage.getItem('auth_user')
-      return stored ? JSON.parse(stored) : null
-    } catch {
-      return null
-    }
-  })
+  const [ready, setReady] = useState(false)
+  const [user, setUser] = useState(null)
 
-  function login(selectedUser) {
-    setUser(selectedUser)
-    localStorage.setItem('auth_user', JSON.stringify(selectedUser))
+  useEffect(() => {
+    let mounted = true
+
+    initKeycloak()
+      .then((authenticated) => {
+        if (!mounted) return
+        setUser(authenticated ? getUserFromToken() : null)
+      })
+      .finally(() => {
+        if (mounted) setReady(true)
+      })
+
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  function login() {
+    keycloak.login({ redirectUri: `${window.location.origin}/dashboard` })
+  }
+
+  function register() {
+    keycloak.register({ redirectUri: `${window.location.origin}/dashboard` })
   }
 
   function logout() {
-    setUser(null)
-    localStorage.removeItem('auth_user')
+    keycloak.logout({ redirectUri: `${window.location.origin}/login` })
   }
 
+  const value = useMemo(
+    () => ({ ready, user, login, register, logout, token: keycloak.token }),
+    [ready, user]
+  )
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   )
