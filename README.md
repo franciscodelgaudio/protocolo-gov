@@ -117,6 +117,10 @@ PATCH /processes/{id}/status
 * `GlobalExceptionHandler`;
 * status codes corretos.
 
+> Observação de modelagem: o campo de status pertence ao `Process`, não à `Request`.
+> A solicitação deve ser aceita ou rejeitada pelo fluxo da API, e somente uma solicitação aceita pode gerar um processo.
+> O andamento depois disso é controlado pelo status do processo.
+
 ### Resultado esperado do dia
 
 Ao final do dia, a API deve estar funcional no Postman ou Insomnia, com o fluxo completo funcionando:

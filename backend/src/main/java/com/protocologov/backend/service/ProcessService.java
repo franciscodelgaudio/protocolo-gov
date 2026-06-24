@@ -23,6 +23,9 @@ public class ProcessService {
 
     public Process createProcess(Process process, Long userId) {
         requireAdmin(userId);
+        if (processRepository.existsByRequest_Id(process.getRequest().getId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "A process already exists for request id: " + process.getRequest().getId());
+        }
         return processRepository.save(process);
     }
 
