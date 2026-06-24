@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext.jsx'
 import { getUserById } from '@/services/api.js'
 import { Button } from '@/components/ui/button'
@@ -82,8 +82,11 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <p className="text-center text-slate-500 text-xs mt-6">
-          Sem conta? Peça ao administrador para cadastrá-lo.
+        <p className="text-center text-slate-500 text-sm mt-5">
+          Sem conta?{' '}
+          <Link to="/cadastro" className="text-slate-300 hover:text-white underline underline-offset-2">
+            Criar conta
+          </Link>
         </p>
       </div>
     </div>

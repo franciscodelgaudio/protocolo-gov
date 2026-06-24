@@ -44,10 +44,11 @@ function adaptPage(springPage) {
   }
 }
 
-// Formata data ISO para exibição (ex: "2026-06-24")
+// Formata data para exibição — aceita ISO string ou Unix timestamp em ms
 export function formatDate(dateStr) {
   if (!dateStr) return '—'
-  return new Date(dateStr).toLocaleDateString('pt-BR')
+  const d = new Date(dateStr)
+  return isNaN(d.getTime()) ? '—' : d.toLocaleDateString('pt-BR')
 }
 
 // ─── USERS ────────────────────────────────────────────────────────────────────
