@@ -12,7 +12,6 @@ export async function initKeycloak() {
   if (initialized) return keycloak.authenticated
 
   const authenticated = await keycloak.init({
-    onLoad: 'check-sso',
     pkceMethod: 'S256',
     checkLoginIframe: false,
   })
