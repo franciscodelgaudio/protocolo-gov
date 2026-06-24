@@ -7,9 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserRequestDTO {
-    @NotNull(message = "User id cannot be null")
-    private Long userId;
-
     @NotNull(message = "Request id cannot be null")
     private Long requestId;
 }

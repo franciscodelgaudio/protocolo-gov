@@ -1,7 +1,6 @@
 package com.protocologov.backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +15,4 @@ public class CreateProcessFromRequestDTO {
     @NotBlank(message = "Description cannot be blank")
     @Size(max = 500, message = "Description must have at most 500 characters")
     private String description;
-
-    @NotNull(message = "User id cannot be null")
-    private Long userId;
 }

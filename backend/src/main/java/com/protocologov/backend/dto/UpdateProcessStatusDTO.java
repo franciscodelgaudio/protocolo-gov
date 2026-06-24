@@ -10,7 +10,4 @@ import lombok.Setter;
 public class UpdateProcessStatusDTO {
     @NotNull(message = "Status cannot be null")
     private Status status;
-
-    @NotNull(message = "User id cannot be null")
-    private Long userId;
 }
