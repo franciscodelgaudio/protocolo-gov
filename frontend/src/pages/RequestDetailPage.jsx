@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext.jsx'
 import {
-  getRequestById, acceptRequest, rejectRequest, createProcessFromRequest,
+  getRequestById, acceptRequest, rejectRequest, createProcessFromRequest, formatDate,
 } from '@/services/api.js'
 import Layout from '@/components/Layout.jsx'
 import StatusBadge from '@/components/StatusBadge.jsx'
@@ -16,7 +16,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog'
 import {
-  ArrowLeft, CheckCircle, XCircle, Briefcase, User, Calendar, Loader2, FileText,
+  ArrowLeft, CheckCircle, XCircle, Briefcase, Calendar, Loader2, FileText,
 } from 'lucide-react'
 
 export default function RequestDetailPage() {
@@ -27,15 +27,19 @@ export default function RequestDetailPage() {
 
   const [request, setRequest] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [actionLoading, setActionLoading] = useState(null)
   const [showProcessModal, setShowProcessModal] = useState(false)
   const [processForm, setProcessForm] = useState({ name: '', description: '' })
   const [submitting, setSubmitting] = useState(false)
+  const [formError, setFormError] = useState('')
 
   function load() {
     setLoading(true)
+    setError('')
     getRequestById(id, user.id)
       .then(setRequest)
+      .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
   }
 
@@ -46,6 +50,8 @@ export default function RequestDetailPage() {
     try {
       const updated = await acceptRequest(id, user.id)
       setRequest((r) => ({ ...r, status: updated.status }))
+    } catch (err) {
+      alert(err.message)
     } finally {
       setActionLoading(null)
     }
@@ -57,6 +63,8 @@ export default function RequestDetailPage() {
     try {
       const updated = await rejectRequest(id, user.id)
       setRequest((r) => ({ ...r, status: updated.status }))
+    } catch (err) {
+      alert(err.message)
     } finally {
       setActionLoading(null)
     }
@@ -65,10 +73,17 @@ export default function RequestDetailPage() {
   async function handleCreateProcess(e) {
     e.preventDefault()
     setSubmitting(true)
+    setFormError('')
     try {
-      const newProcess = await createProcessFromRequest(id, { ...processForm, userId: user.id })
+      const newProcess = await createProcessFromRequest(id, {
+        name: processForm.name,
+        description: processForm.description,
+        userId: user.id,
+      })
       setRequest((r) => ({ ...r, process: newProcess }))
       setShowProcessModal(false)
+    } catch (err) {
+      setFormError(err.message)
     } finally {
       setSubmitting(false)
     }
@@ -76,6 +91,7 @@ export default function RequestDetailPage() {
 
   function openProcessModal() {
     setProcessForm({ name: `Processo: ${request?.name}`, description: '' })
+    setFormError('')
     setShowProcessModal(true)
   }
 
@@ -89,8 +105,15 @@ export default function RequestDetailPage() {
     )
   }
 
-  if (!request) {
-    return <Layout><p className="text-center py-24 text-muted-foreground">Solicitação não encontrada.</p></Layout>
+  if (error || !request) {
+    return (
+      <Layout>
+        <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4 -ml-2">
+          <ArrowLeft size={16} /> Voltar
+        </Button>
+        <p className="text-center py-12 text-destructive">{error || 'Solicitação não encontrada.'}</p>
+      </Layout>
+    )
   }
 
   const canAccept = isAdmin && request.status === 'PENDING'
@@ -144,7 +167,6 @@ export default function RequestDetailPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main */}
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
@@ -156,7 +178,6 @@ export default function RequestDetailPage() {
           </Card>
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-4">
           <Card>
             <CardHeader className="pb-3">
@@ -167,21 +188,9 @@ export default function RequestDetailPage() {
                 <Calendar size={15} className="text-muted-foreground mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-xs text-muted-foreground">Criado em</p>
-                  <p className="text-sm font-medium">{request.createdAt}</p>
+                  <p className="text-sm font-medium">{formatDate(request.createdAt)}</p>
                 </div>
               </div>
-              {request.owner && (
-                <>
-                  <Separator />
-                  <div className="flex items-start gap-3">
-                    <User size={15} className="text-muted-foreground mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Solicitante</p>
-                      <p className="text-sm font-medium">{request.owner.name}</p>
-                    </div>
-                  </div>
-                </>
-              )}
               <Separator />
               <div className="flex items-start gap-3">
                 <FileText size={15} className="text-muted-foreground mt-0.5 flex-shrink-0" />
@@ -216,14 +225,13 @@ export default function RequestDetailPage() {
             <Card className="border-primary/20 bg-primary/5">
               <CardContent className="pt-5">
                 <p className="text-sm font-medium text-primary mb-1">Nenhum processo criado</p>
-                <p className="text-xs text-muted-foreground">Esta solicitação está aceita e aguarda a criação de um processo.</p>
+                <p className="text-xs text-muted-foreground">Aguarda criação de processo.</p>
               </CardContent>
             </Card>
           ) : null}
         </div>
       </div>
 
-      {/* Create Process Dialog */}
       <Dialog open={showProcessModal} onOpenChange={(open) => { if (!open) setShowProcessModal(false) }}>
         <DialogContent>
           <DialogHeader>
@@ -253,6 +261,7 @@ export default function RequestDetailPage() {
                 placeholder="Descreva o processo..."
               />
             </div>
+            {formError && <p className="text-sm text-destructive">{formError}</p>}
           </form>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowProcessModal(false)}>Cancelar</Button>

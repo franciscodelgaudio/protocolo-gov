@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext.jsx'
-import { getRequests, getProcesses } from '@/services/api.js'
+import { getRequests, getProcesses, formatDate } from '@/services/api.js'
 import Layout from '@/components/Layout.jsx'
 import StatusBadge from '@/components/StatusBadge.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -75,17 +75,15 @@ export default function DashboardPage() {
         </div>
       ) : (
         <>
-          {/* Stat cards */}
           <div className={`grid gap-4 mb-8 ${isAdmin ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-2'}`}>
             <StatCard icon={FileText} label="Total de Solicitações" value={total} iconClass="bg-slate-600" />
             <StatCard icon={Clock} label="Pendentes" value={pending} iconClass="bg-yellow-500" />
             <StatCard icon={CheckCircle} label="Aceitas" value={accepted} iconClass="bg-green-500" />
             <StatCard icon={XCircle} label="Rejeitadas" value={rejected} iconClass="bg-red-500" />
             {isAdmin && <StatCard icon={Briefcase} label="Total de Processos" value={totalProcesses} iconClass="bg-primary" />}
-            {isAdmin && <StatCard icon={Briefcase} label="Processos Em Andamento" value={inProgress} iconClass="bg-indigo-500" />}
+            {isAdmin && <StatCard icon={Briefcase} label="Em Andamento" value={inProgress} iconClass="bg-indigo-500" />}
           </div>
 
-          {/* Recent requests */}
           <Card>
             <CardHeader className="flex-row items-center justify-between pb-3">
               <CardTitle className="text-base">Solicitações Recentes</CardTitle>
@@ -119,7 +117,7 @@ export default function DashboardPage() {
                           <p className="text-xs text-muted-foreground truncate max-w-xs">{r.description}</p>
                         </TableCell>
                         <TableCell><StatusBadge status={r.status} /></TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{r.createdAt}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">{formatDate(r.createdAt)}</TableCell>
                         <TableCell className="text-right">
                           <Button variant="ghost" size="sm" asChild>
                             <Link to={`/solicitacoes/${r.id}`} className="text-primary">Ver</Link>

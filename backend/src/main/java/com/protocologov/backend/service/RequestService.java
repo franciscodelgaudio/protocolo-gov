@@ -56,9 +56,8 @@ public class RequestService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied: only admins can accept requests");
         }
         Request request = requestRepository.findById(requestId)
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                "Request not found with id: " + requestId));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Request not found with id: " + requestId));
         if (request.getStatus() == RequestStatus.REJECTED) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Rejected requests cannot be accepted");
         }
@@ -73,9 +72,8 @@ public class RequestService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied: only admins can reject requests");
         }
         Request request = requestRepository.findById(requestId)
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                "Request not found with id: " + requestId));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Request not found with id: " + requestId));
         if (request.getStatus() == RequestStatus.ACCEPTED) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Accepted requests cannot be rejected");
         }
@@ -83,20 +81,25 @@ public class RequestService {
         return requestRepository.save(request);
     }
 
-    public Page<Request> getAllRequests(Long userId, Pageable pageable) {
+    public Page<Request> getAllRequests(Long userId, RequestStatus status, Pageable pageable) {
         User user = getUser(userId);
         if (user.getRole() == Role.ADMIN) {
-            return requestRepository.findAll(pageable);
+            return status != null
+                    ? requestRepository.findByStatus(status, pageable)
+                    : requestRepository.findAll(pageable);
         }
-        return userRequestRepository.findByUser_Id(userId, pageable)
-                .map(UserRequest::getRequest);
+        return status != null
+                ? userRequestRepository.findByUser_IdAndRequest_Status(userId, status, pageable)
+                        .map(UserRequest::getRequest)
+                : userRequestRepository.findByUser_Id(userId, pageable)
+                        .map(UserRequest::getRequest);
     }
 
     public Request getRequestById(Long id, Long userId) {
         User user = getUser(userId);
         Request request = requestRepository.findById(id)
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found with id: " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Request not found with id: " + id));
         if (user.getRole() != Role.ADMIN) {
             requireOwnership(userId, id);
         }
@@ -106,7 +109,8 @@ public class RequestService {
     public Request updateRequest(Request request, Long userId) {
         User user = getUser(userId);
         if (!requestRepository.existsById(request.getId())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found with id: " + request.getId());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Request not found with id: " + request.getId());
         }
         if (user.getRole() != Role.ADMIN) {
             requireOwnership(userId, request.getId());
@@ -130,13 +134,14 @@ public class RequestService {
 
     private User getUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "User not found with id: " + userId));
     }
 
     private void requireOwnership(Long userId, Long requestId) {
         if (!userRequestRepository.existsByUser_IdAndRequest_Id(userId, requestId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied: you do not own this request");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Access denied: you do not own this request");
         }
     }
 }

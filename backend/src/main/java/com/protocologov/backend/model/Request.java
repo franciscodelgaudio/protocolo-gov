@@ -1,6 +1,9 @@
 package com.protocologov.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.protocologov.backend.enums.RequestStatus;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.util.Date;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -27,11 +30,13 @@ public class Request {
 
     private String description;
 
+    @CreationTimestamp
     private Date createdAt;
 
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
 
     @OneToOne(mappedBy = "request")
+    @JsonIgnoreProperties("request")
     private Process process;
 }

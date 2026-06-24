@@ -1,6 +1,7 @@
 package com.protocologov.backend.controller;
 
 import com.protocologov.backend.dto.RequestDTO;
+import com.protocologov.backend.enums.RequestStatus;
 import com.protocologov.backend.model.Request;
 import com.protocologov.backend.service.RequestService;
 import jakarta.validation.Valid;
@@ -22,7 +23,8 @@ public class RequestController {
     @PostMapping("/requests")
     public ResponseEntity<Request> createRequest(@Valid @RequestBody RequestDTO requestDTO) {
         Request request = toEntity(requestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(requestService.createRequest(request, requestDTO.getUserId()));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(requestService.createRequest(request, requestDTO.getUserId()));
     }
 
     @PatchMapping("/requests/{id}/accept")
@@ -36,8 +38,14 @@ public class RequestController {
     }
 
     @GetMapping("/requests")
-    public ResponseEntity<Page<Request>> getAllRequests(@RequestParam Long userId, Pageable pageable) {
-        return ResponseEntity.ok(requestService.getAllRequests(userId, pageable));
+    public ResponseEntity<Page<Request>> getAllRequests(
+            @RequestParam Long userId,
+            @RequestParam(required = false) String status,
+            Pageable pageable) {
+        RequestStatus requestStatus = (status != null && !status.equals("ALL"))
+                ? RequestStatus.valueOf(status)
+                : null;
+        return ResponseEntity.ok(requestService.getAllRequests(userId, requestStatus, pageable));
     }
 
     @GetMapping("/requests/{id}")
@@ -46,7 +54,8 @@ public class RequestController {
     }
 
     @PutMapping("/requests/{id}")
-    public ResponseEntity<Request> updateRequest(@PathVariable Long id, @Valid @RequestBody RequestDTO requestDTO) {
+    public ResponseEntity<Request> updateRequest(@PathVariable Long id,
+            @Valid @RequestBody RequestDTO requestDTO) {
         Request request = toEntity(requestDTO);
         request.setId(id);
         return ResponseEntity.ok(requestService.updateRequest(request, requestDTO.getUserId()));

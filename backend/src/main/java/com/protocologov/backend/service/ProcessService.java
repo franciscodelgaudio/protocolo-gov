@@ -22,7 +22,8 @@ public class ProcessService {
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
 
-    public ProcessService(ProcessRepository processRepository, RequestRepository requestRepository, UserRepository userRepository) {
+    public ProcessService(ProcessRepository processRepository, RequestRepository requestRepository,
+            UserRepository userRepository) {
         this.processRepository = processRepository;
         this.requestRepository = requestRepository;
         this.userRepository = userRepository;
@@ -31,11 +32,10 @@ public class ProcessService {
     @Transactional
     public Process createProcess(Process process, Long userId) {
         requireAdmin(userId);
-
         if (process.getRequest() == null || process.getRequest().getId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request id is required to create a process");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Request id is required to create a process");
         }
-
         return createProcessForAcceptedRequest(process.getRequest().getId(), process);
     }
 
@@ -46,9 +46,11 @@ public class ProcessService {
         return createProcessForAcceptedRequest(requestId, process);
     }
 
-    public Page<Process> getAllProcesses(Long userId, Pageable pageable) {
+    public Page<Process> getAllProcesses(Long userId, Status status, Pageable pageable) {
         requireAdmin(userId);
-        return processRepository.findAll(pageable);
+        return status != null
+                ? processRepository.findByStatus(status, pageable)
+                : processRepository.findAll(pageable);
     }
 
     public Process getProcessById(Long id, Long userId) {
@@ -59,7 +61,8 @@ public class ProcessService {
     public Process updateProcess(Process process, Long userId) {
         requireAdmin(userId);
         if (!processRepository.existsById(process.getId())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Process not found with id: " + process.getId());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Process not found with id: " + process.getId());
         }
         return processRepository.save(process);
     }
@@ -82,30 +85,33 @@ public class ProcessService {
 
     private Process createProcessForAcceptedRequest(Long requestId, Process process) {
         Request request = requestRepository.findById(requestId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found with id: " + requestId));
-
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Request not found with id: " + requestId));
         if (request.getStatus() != RequestStatus.ACCEPTED) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Only accepted requests can generate a process");
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Only accepted requests can generate a process");
         }
-
         if (processRepository.existsByRequest_Id(requestId)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "A process already exists for request id: " + requestId);
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "A process already exists for request id: " + requestId);
         }
-
         process.setRequest(request);
         return processRepository.save(process);
     }
 
     private Process findProcess(Long id) {
         return processRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Process not found with id: " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Process not found with id: " + id));
     }
 
     private void requireAdmin(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "User not found with id: " + userId));
         if (user.getRole() != Role.ADMIN) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied: only ADMIN users can perform this operation");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Access denied: only ADMIN users can perform this operation");
         }
     }
 }

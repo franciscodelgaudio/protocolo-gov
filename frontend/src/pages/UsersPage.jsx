@@ -11,9 +11,13 @@ import { Users, Loader2 } from 'lucide-react'
 export default function UsersPage() {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    getAllUsers().then(setUsers).finally(() => setLoading(false))
+    getAllUsers()
+      .then(setUsers)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false))
   }, [])
 
   return (
@@ -29,6 +33,8 @@ export default function UsersPage() {
             <div className="flex items-center justify-center py-16 text-muted-foreground">
               <Loader2 size={24} className="animate-spin mr-2" /> Carregando...
             </div>
+          ) : error ? (
+            <div className="py-16 text-center text-destructive text-sm">{error}</div>
           ) : users.length === 0 ? (
             <div className="py-16 text-center text-muted-foreground">
               <Users size={28} className="mx-auto mb-2 opacity-40" />
@@ -51,7 +57,7 @@ export default function UsersPage() {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
-                          <span className="text-sm font-medium text-foreground">{u.name.charAt(0)}</span>
+                          <span className="text-sm font-medium">{u.name?.charAt(0)}</span>
                         </div>
                         <span className="font-medium text-sm">{u.name}</span>
                       </div>

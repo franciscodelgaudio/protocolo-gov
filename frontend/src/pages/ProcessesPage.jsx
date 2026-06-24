@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext.jsx'
-import { getProcesses, deleteProcess } from '@/services/api.js'
+import { getProcesses, deleteProcess, formatDate } from '@/services/api.js'
 import Layout from '@/components/Layout.jsx'
 import StatusBadge from '@/components/StatusBadge.jsx'
 import Pagination from '@/components/Pagination.jsx'
@@ -41,8 +41,12 @@ export default function ProcessesPage() {
 
   async function handleDelete(id) {
     if (!confirm('Excluir este processo?')) return
-    await deleteProcess(id, user.id)
-    load()
+    try {
+      await deleteProcess(id, user.id)
+      load()
+    } catch (err) {
+      alert(err.message)
+    }
   }
 
   return (
@@ -52,7 +56,6 @@ export default function ProcessesPage() {
         <p className="text-muted-foreground text-sm mt-1">Gerencie os processos abertos no sistema.</p>
       </div>
 
-      {/* Filter tabs */}
       <div className="flex gap-1 mb-4 bg-muted p-1 rounded-lg w-fit flex-wrap">
         {STATUS_FILTERS.map((f) => (
           <button
@@ -113,7 +116,9 @@ export default function ProcessesPage() {
                         ) : <span className="text-muted-foreground">—</span>}
                       </TableCell>
                       <TableCell><StatusBadge status={p.status} /></TableCell>
-                      <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">{p.createdAt}</TableCell>
+                      <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">
+                        {formatDate(p.createdAt)}
+                      </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
                           <Button variant="ghost" size="icon" asChild>

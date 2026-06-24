@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext.jsx'
-import { getRequests, createRequest, deleteRequest } from '@/services/api.js'
+import { getRequests, createRequest, deleteRequest, formatDate } from '@/services/api.js'
 import Layout from '@/components/Layout.jsx'
 import StatusBadge from '@/components/StatusBadge.jsx'
 import Pagination from '@/components/Pagination.jsx'
@@ -38,11 +38,13 @@ export default function RequestsPage() {
   const [showModal, setShowModal] = useState(false)
   const [form, setForm] = useState({ name: '', description: '' })
   const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
 
   const load = useCallback(() => {
     setLoading(true)
     getRequests({ userId: user.id, page, size: PAGE_SIZE, status: statusFilter })
       .then(setData)
+      .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
   }, [user.id, page, statusFilter])
 
@@ -56,12 +58,15 @@ export default function RequestsPage() {
   async function handleCreate(e) {
     e.preventDefault()
     setSubmitting(true)
+    setError('')
     try {
-      await createRequest({ ...form, userId: user.id })
+      await createRequest({ name: form.name, description: form.description, userId: user.id })
       setShowModal(false)
       setForm({ name: '', description: '' })
       setPage(0)
       load()
+    } catch (err) {
+      setError(err.message)
     } finally {
       setSubmitting(false)
     }
@@ -69,8 +74,12 @@ export default function RequestsPage() {
 
   async function handleDelete(id) {
     if (!confirm('Excluir esta solicitação?')) return
-    await deleteRequest(id, user.id)
-    load()
+    try {
+      await deleteRequest(id, user.id)
+      load()
+    } catch (err) {
+      alert(err.message)
+    }
   }
 
   return (
@@ -89,7 +98,6 @@ export default function RequestsPage() {
         </Button>
       </div>
 
-      {/* Filter tabs */}
       <div className="flex gap-1 mb-4 bg-muted p-1 rounded-lg w-fit">
         {STATUS_FILTERS.map((f) => (
           <button
@@ -139,13 +147,13 @@ export default function RequestsPage() {
                         <p className="text-muted-foreground truncate max-w-xs text-sm">{r.description}</p>
                       </TableCell>
                       <TableCell><StatusBadge status={r.status} /></TableCell>
-                      <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">{r.createdAt}</TableCell>
+                      <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">
+                        {formatDate(r.createdAt)}
+                      </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
                           <Button variant="ghost" size="icon" asChild>
-                            <Link to={`/solicitacoes/${r.id}`} title="Ver detalhes">
-                              <Eye size={16} />
-                            </Link>
+                            <Link to={`/solicitacoes/${r.id}`} title="Ver detalhes"><Eye size={16} /></Link>
                           </Button>
                           <Button
                             variant="ghost"
@@ -174,43 +182,41 @@ export default function RequestsPage() {
         </CardContent>
       </Card>
 
-      {/* Create modal */}
-      <Dialog open={showModal} onOpenChange={(open) => { if (!open) setShowModal(false) }}>
+      <Dialog open={showModal} onOpenChange={(open) => { if (!open) { setShowModal(false); setError('') } }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Nova Solicitação</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleCreate} className="px-6 pb-2">
-            <div className="space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="req-name">Nome</Label>
-                <Input
-                  id="req-name"
-                  required
-                  minLength={3}
-                  maxLength={100}
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="Ex: Certidão de nascimento"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="req-desc">Descrição</Label>
-                <Textarea
-                  id="req-desc"
-                  required
-                  maxLength={500}
-                  rows={4}
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="Descreva detalhes da solicitação..."
-                />
-                <p className="text-xs text-muted-foreground text-right">{form.description.length}/500</p>
-              </div>
+          <form onSubmit={handleCreate} className="px-6 pb-2 space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="req-name">Nome</Label>
+              <Input
+                id="req-name"
+                required
+                minLength={3}
+                maxLength={100}
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="Ex: Certidão de nascimento"
+              />
             </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="req-desc">Descrição</Label>
+              <Textarea
+                id="req-desc"
+                required
+                maxLength={500}
+                rows={4}
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                placeholder="Descreva detalhes da solicitação..."
+              />
+              <p className="text-xs text-muted-foreground text-right">{form.description.length}/500</p>
+            </div>
+            {error && <p className="text-sm text-destructive">{error}</p>}
           </form>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowModal(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => { setShowModal(false); setError('') }}>Cancelar</Button>
             <Button onClick={handleCreate} disabled={submitting}>
               {submitting && <Loader2 size={14} className="animate-spin" />}
               Criar Solicitação

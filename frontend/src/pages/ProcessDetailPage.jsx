@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext.jsx'
-import { getProcessById, updateProcessStatus } from '@/services/api.js'
+import { getProcessById, updateProcessStatus, formatDate } from '@/services/api.js'
 import Layout from '@/components/Layout.jsx'
 import StatusBadge from '@/components/StatusBadge.jsx'
 import { Button } from '@/components/ui/button'
@@ -27,6 +27,7 @@ export default function ProcessDetailPage() {
 
   const [process, setProcess] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [newStatus, setNewStatus] = useState('')
   const [updating, setUpdating] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -35,6 +36,7 @@ export default function ProcessDetailPage() {
     setLoading(true)
     getProcessById(id, user.id)
       .then((p) => { setProcess(p); setNewStatus(p.status) })
+      .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
   }, [id, user.id])
 
@@ -47,6 +49,8 @@ export default function ProcessDetailPage() {
       setNewStatus(updated.status)
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
+    } catch (err) {
+      alert(err.message)
     } finally {
       setUpdating(false)
     }
@@ -62,8 +66,15 @@ export default function ProcessDetailPage() {
     )
   }
 
-  if (!process) {
-    return <Layout><p className="text-center py-24 text-muted-foreground">Processo não encontrado.</p></Layout>
+  if (error || !process) {
+    return (
+      <Layout>
+        <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4 -ml-2">
+          <ArrowLeft size={16} /> Voltar
+        </Button>
+        <p className="text-center py-12 text-destructive">{error || 'Processo não encontrado.'}</p>
+      </Layout>
+    )
   }
 
   return (
@@ -72,7 +83,7 @@ export default function ProcessDetailPage() {
         <ArrowLeft size={16} /> Voltar
       </Button>
 
-      <div className="flex items-start justify-between gap-4 mb-6">
+      <div className="flex items-start gap-3 mb-6">
         <div>
           <div className="flex items-center gap-3 mb-1">
             <h1 className="text-2xl font-bold text-foreground">{process.name}</h1>
@@ -83,7 +94,6 @@ export default function ProcessDetailPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main */}
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
@@ -94,7 +104,6 @@ export default function ProcessDetailPage() {
             </CardContent>
           </Card>
 
-          {/* Status update */}
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Atualizar Status</CardTitle>
@@ -126,7 +135,6 @@ export default function ProcessDetailPage() {
           </Card>
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-4">
           <Card>
             <CardHeader className="pb-3">
@@ -137,7 +145,7 @@ export default function ProcessDetailPage() {
                 <Calendar size={15} className="text-muted-foreground mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-xs text-muted-foreground">Criado em</p>
-                  <p className="text-sm font-medium">{process.createdAt}</p>
+                  <p className="text-sm font-medium">{formatDate(process.createdAt)}</p>
                 </div>
               </div>
               <Separator />

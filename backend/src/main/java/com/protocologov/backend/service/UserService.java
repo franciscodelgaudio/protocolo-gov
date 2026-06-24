@@ -4,6 +4,8 @@ import com.protocologov.backend.model.User;
 import com.protocologov.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -23,10 +25,15 @@ public class UserService {
 
     public User getById(Long id) {
         try {
-            return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+            return userRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         } catch (Exception e) {
             throw new RuntimeException("Error retrieving user: " + e.getMessage());
         }
+    }
+
+    public List<User> getAll() {
+        return userRepository.findAll();
     }
 
     public User update(User user) {

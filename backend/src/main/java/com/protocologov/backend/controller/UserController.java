@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class UserController {
@@ -24,6 +26,14 @@ public class UserController {
         return ResponseEntity.ok(toResponseDTO(createdUser));
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        List<UserResponseDTO> users = userService.getAll().stream()
+                .map(this::toResponseDTO)
+                .toList();
+        return ResponseEntity.ok(users);
+    }
+
     @GetMapping("/users/{id}")
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
         User user = userService.getById(id);
@@ -31,7 +41,8 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id,
+            @Valid @RequestBody UserDTO userDTO) {
         User user = toEntity(userDTO);
         user.setId(id);
         User updatedUser = userService.update(user);

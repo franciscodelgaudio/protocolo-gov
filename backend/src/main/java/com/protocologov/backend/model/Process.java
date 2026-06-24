@@ -1,5 +1,8 @@
 package com.protocologov.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.util.Date;
 import com.protocologov.backend.enums.Status;
 import jakarta.persistence.EnumType;
@@ -28,6 +31,7 @@ public class Process {
 
     private String description;
 
+    @CreationTimestamp
     private Date createdAt;
 
     @Enumerated(EnumType.STRING)
@@ -35,5 +39,6 @@ public class Process {
 
     @OneToOne
     @JoinColumn(name = "request_id", nullable = false, unique = true)
+    @JsonIgnoreProperties("process")
     private Request request;
 }
