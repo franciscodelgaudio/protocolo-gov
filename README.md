@@ -251,7 +251,6 @@ Estudar:
 * stub;
 * Arrange, Act, Assert;
 * Mockito;
-* JUnit.
 
 ### Conceitos que preciso saber explicar
 
