@@ -1,0 +1,76 @@
+{
+  "realm": "protocolagov",
+  "enabled": true,
+  "registrationAllowed": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "USER",
+        "description": "Usuario comum"
+      },
+      {
+        "name": "ADMIN",
+        "description": "Administrador"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "protocologov-frontend",
+      "name": "ProtocolaGov Frontend",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "redirectUris": [
+        "http://localhost:5173/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173"
+      ],
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "user@protocologov.local",
+      "email": "user@protocologov.local",
+      "firstName": "Usuario",
+      "lastName": "Teste",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "USER"
+      ]
+    },
+    {
+      "username": "admin@protocologov.local",
+      "email": "admin@protocologov.local",
+      "firstName": "Admin",
+      "lastName": "Teste",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "USER",
+        "ADMIN"
+      ]
+    }
+  ]
+}
