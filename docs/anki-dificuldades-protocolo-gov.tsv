@@ -1,59 +1,21 @@
-O que o Controller deve fazer?	Receber a requisição HTTP, mapear a rota, receber parâmetros/body, acionar validação e chamar o Service.	controller spring
-O que o Service deve fazer?	Concentrar regra de negócio, validar permissões, validar estado atual, aplicar mudanças e chamar repositories.	service arquitetura
-O que o Repository deve fazer?	Abstrair o acesso ao banco de dados, usando Spring Data JPA para salvar, buscar, listar e remover registros.	repository jpa
-Por que não colocar regra de negócio no Controller?	Porque o Controller deve cuidar de HTTP; regra no Service fica mais testável, reutilizável e menos acoplada à web.	controller service
-Qual a diferença entre endpoint e regra de negócio?	Endpoint é a entrada HTTP; regra de negócio é a decisão interna sobre se a operação pode acontecer e como altera o domínio.	rest arquitetura
 Uma rota como PATCH /requests/{id}/accept garante sozinha a consistência do banco?	Não. Ela comunica a intenção; quem garante consistência é o Service validando estado, permissão e regras antes de salvar.	rest service
 Por que usar PATCH para aceitar ou rejeitar uma solicitação?	Porque accept/reject são alterações parciais ou transições de estado, não substituição completa do recurso.	rest patch
 Por que não deixar o cliente mandar qualquer status?	Porque o cliente poderia pular etapas e salvar estados inválidos; o backend deve receber ações e decidir se a transição é permitida.	api dominio
-Quando usar GET?	Para buscar dados sem alterar estado no servidor.	http metodo
-Quando usar POST?	Para criar um recurso novo ou disparar uma criação no domínio.	http metodo
-Quando usar PUT?	Para substituir ou atualizar um recurso inteiro.	http metodo
-Quando usar PATCH?	Para alteração parcial ou transição de estado específica.	http metodo
-Quando usar DELETE?	Para remover um recurso.	http metodo
-O que significa 400 Bad Request?	O cliente enviou dados inválidos, como campos obrigatórios ausentes ou erro de validação.	http status
-O que significa 401 Unauthorized?	O usuário não está autenticado ou não enviou credencial válida.	http status auth
-O que significa 403 Forbidden?	O usuário está autenticado, mas não tem permissão para executar a operação.	http status auth
-O que significa 404 Not Found?	O recurso solicitado não foi encontrado.	http status
-O que significa 409 Conflict?	A requisição está bem formada, mas conflita com uma regra de negócio ou com o estado atual do recurso.	http status dominio
-Qual a diferença entre 401 e 403?	401 é falta de autenticação válida; 403 é usuário conhecido, mas sem autorização.	auth http
-Qual a diferença entre 404 e 409?	404 é recurso inexistente; 409 é recurso existente, mas operação incompatível com regra ou estado atual.	http dominio
-O que é DTO?	DTO é um objeto de transferência que define o contrato da API, separado da entidade do banco.	dto api
-Por que usar DTO em vez de Entity direto?	Para controlar entrada/saída, validar dados, esconder campos internos e evitar acoplamento entre API e banco.	dto entity
 Que campos o cliente normalmente não deveria controlar?	Campos como id, status, dono, datas de criação e campos calculados pelo servidor.	dto dominio
-O que é Bean Validation?	É a validação declarativa de objetos Java usando anotações como @NotNull, @NotBlank e @Size.	bean-validation
-Qual a diferença entre @NotNull e @NotBlank?	@NotNull impede valor nulo; @NotBlank é para String e impede nulo, vazio ou só espaços.	bean-validation
 Para que serve @Valid no Controller?	Para pedir ao Spring que valide o DTO recebido antes de executar o método do controller.	bean-validation spring
 O que acontece quando @Valid falha?	O Spring lança uma exceção de validação, normalmente tratada por um GlobalExceptionHandler para retornar 400.	bean-validation exception
-O que é JPA?	JPA é uma especificação Java para mapear objetos para tabelas relacionais.	jpa
 O que é Hibernate?	Hibernate é uma implementação da JPA que executa o mapeamento objeto-relacional.	jpa hibernate
-O que é uma Entity?	Uma classe Java mapeada para uma tabela do banco, normalmente anotada com @Entity.	jpa entity
 Para que serve @ManyToOne?	Indica que muitos registros de uma entidade apontam para um registro de outra entidade.	jpa relacionamento
 Para que serve @OneToOne?	Indica que um registro se relaciona com no máximo um registro de outra entidade.	jpa relacionamento
 Para que serve @JoinColumn?	Define a coluna de chave estrangeira usada no relacionamento.	jpa relacionamento
 Por que usar @Enumerated(EnumType.STRING)?	Para salvar o nome do enum no banco, evitando problemas se a ordem dos valores mudar.	jpa enum
 O que é Pageable?	Uma abstração do Spring Data para paginação e ordenação, usando page, size e sort.	pageable
-Qual é a primeira página no Pageable?	A página 0.	pageable
 Qual a diferença entre Page e List?	List traz só os itens; Page traz itens e metadados como totalElements e totalPages.	pageable
 Por que usar paginação?	Para evitar carregar muitos dados de uma vez e melhorar performance em listagens.	pageable api
-O que é @Transactional?	Uma anotação que executa operações de banco dentro de uma transação: se algo falha, pode fazer rollback.	transaction spring
-Quando usar @Transactional?	Quando uma regra envolve múltiplas operações de banco que precisam ser salvas ou desfeitas juntas.	transaction service
 Por que criar solicitação pode precisar de transação?	Porque salva a solicitação e também o vínculo com o usuário; se uma parte falhar, não deve ficar dado pela metade.	transaction dominio
-O que é autenticação?	Verificar quem é o usuário.	auth
-O que é autorização?	Verificar o que o usuário autenticado pode fazer.	auth
-O que o Keycloak faz no projeto?	Faz login, gerencia usuários/roles e emite tokens JWT para o frontend e backend.	keycloak auth
-O que é JWT?	Um token com claims sobre o usuário, como email e roles, assinado pelo provedor de identidade.	jwt auth
-O que é Resource Server?	É a API backend que recebe e valida o access token antes de liberar recursos.	oauth2 spring
-O que é Authorization Server?	É o servidor que autentica usuários e emite tokens, como o Keycloak.	oauth2 keycloak
 Por que o backend usa stateless?	Porque cada requisição traz o token JWT, então o servidor não precisa manter sessão.	jwt stateless
 Por que no Spring usamos hasRole("ADMIN") e não hasRole("ROLE_ADMIN")?	Porque hasRole adiciona o prefixo ROLE_ automaticamente; a authority final é ROLE_ADMIN.	spring-security role
 Como as roles do Keycloak chegam ao Spring Security?	O backend lê as roles do claim realm_access.roles e converte cada uma para SimpleGrantedAuthority com prefixo ROLE_.	keycloak spring-security
-Qual é o fluxo principal do Protocolo Gov?	Usuário cria solicitação, admin aceita ou rejeita, solicitação aceita pode gerar processo, e o processo muda de status.	protocolo-gov dominio
-Quem pode aceitar ou rejeitar solicitação?	Admin, porque accept/reject são operações protegidas por role.	protocolo-gov role
-Quem pode criar solicitação?	Usuário comum ou admin, conforme regra de segurança do endpoint POST /api/requests.	protocolo-gov role
-O que o usuário comum pode ver?	Em geral, apenas suas próprias solicitações; admin pode ver tudo.	protocolo-gov permissao
 Por que centralizar fetch em um service no frontend?	Para não espalhar chamadas HTTP pelas telas e deixar o consumo da API mais organizado.	frontend api
 Como o frontend acessa o backend no Vite?	Ele chama /api no navegador e o proxy do Vite encaminha para o backend configurado.	frontend vite
-Para que serve Docker Compose?	Para subir vários serviços do ambiente, como banco, Keycloak, backend e frontend, com um comando.	docker
-Como explicar o projeto em uma frase?	É um sistema de protocolo em que usuários criam solicitações, admins analisam, e solicitações aceitas podem virar processos acompanhados por status.	entrevista projeto
 Qual resposta curta para "por que seu backend não é só CRUD"?	Porque o domínio tem ações e transições, como aceitar, rejeitar e gerar processo, que precisam de regras no Service.	entrevista dominio
